@@ -1,0 +1,23 @@
+*.iml
+.idea/
+.gradle
+build
+generated
+logs
+/job-runner/test-reports/*
+.DS_STORE
+**/~/
+*/out/
+**/out/
+**/vendor/
+.settings
+.project
+.classpath
+**/bin/
+**/events.db
+**/hs_err*.log
+*.tmp
+*.jar
+
+### Mac OS ###
+.DS_Store
