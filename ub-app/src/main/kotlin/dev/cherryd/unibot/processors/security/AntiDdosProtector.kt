@@ -6,7 +6,7 @@ import dev.cherryd.unibot.core.PostingTransformer
 class AntiDdosProtector : PostingTransformer {
 
     override suspend fun transform(incoming: Posting): Posting {
-        return incoming.copy(content = incoming.content.copy(text = "Hello"))
+        return incoming.copy(content = incoming.content.copy(extra = Posting.Content.Extra.Text("Hello from AntiDdosProtector")))
     }
 
 }
