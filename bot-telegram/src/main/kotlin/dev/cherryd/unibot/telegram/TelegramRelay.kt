@@ -3,18 +3,13 @@ package dev.cherryd.unibot.telegram
 import dev.cherryd.unibot.core.Environment
 import dev.cherryd.unibot.core.Posting
 import dev.cherryd.unibot.core.Relay
-import dev.cherryd.unibot.core.settings.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 
 class TelegramRelay(
     environment: Environment,
-    settingsRepository: SettingsRepository
 ) : Relay {
 
-    private val tgBot = TelegramBot(
-        environment,
-        settingsRepository
-    )
+    private val tgBot = TelegramBot(environment)
 
     private val postingSender = PostingSender(tgBot)
 

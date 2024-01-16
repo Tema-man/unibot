@@ -14,6 +14,7 @@ dependencies {
 
     implementation(project(":bot-telegram"))
     implementation(project(":ub-core"))
+    implementation(project(":ub-app"))
 }
 
 application {

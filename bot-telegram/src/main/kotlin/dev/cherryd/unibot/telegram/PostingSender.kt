@@ -18,15 +18,18 @@ class PostingSender(
     suspend fun send(posting: Posting) {
         logger.info { "Sending posting: $posting" }
 
-        when (val media = posting.media) {
-            is Posting.Media.Command -> Unit
-            is Posting.Media.Text -> {
-                return tgSender.sendInternal(
-                    chatId = posting.chat.id,
-                    text = media.text
-                )
-            }
+        when (val extra = posting.extra) {
+            is Posting.Content.Extra.Text -> sendText(posting, extra.text)
+            else -> {}
         }
+    }
+
+    private suspend fun sendText(posting: Posting, text: String) {
+        tgSender.sendInternal(
+            chatId = posting.content.chat.id,
+            text = text,
+            shouldTypeBeforeSend = true
+        )
     }
 
     private suspend fun AbsSender.sendInternal(

@@ -1,28 +1,21 @@
-package dev.cherryd.unibot.core
+package dev.cherryd.unibot
 
+import dev.cherryd.unibot.core.Posting
+import dev.cherryd.unibot.core.Relay
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class Unibot(
+    private val relays: List<Relay>,
     private val router: Router
 ) {
 
     private val log = KotlinLogging.logger {}
 
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
-    private val relays = mutableListOf<Relay>()
-
-    fun registerRelay(relay: Relay) {
-        if (relays.contains(relay)) return
-        relays.add(relay)
-        log.info { "Registered relay: ${relay.javaClass.name}" }
-    }
 
     fun start() {
         relays.forEach { relay -> startRelayJob(relay) }

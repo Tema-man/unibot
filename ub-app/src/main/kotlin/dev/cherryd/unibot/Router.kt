@@ -1,6 +1,8 @@
-package dev.cherryd.unibot.core
+package dev.cherryd.unibot
 
-import dev.cherryd.unibot.core.processors.security.AntiDdosProtector
+import dev.cherryd.unibot.core.Posting
+import dev.cherryd.unibot.core.PostingTransformer
+import dev.cherryd.unibot.processors.security.AntiDdosProtector
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 class Router(

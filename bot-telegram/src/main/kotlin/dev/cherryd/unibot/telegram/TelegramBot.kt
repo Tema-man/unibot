@@ -2,7 +2,7 @@ package dev.cherryd.unibot.telegram
 
 import dev.cherryd.unibot.core.Environment
 import dev.cherryd.unibot.core.Posting
-import dev.cherryd.unibot.core.settings.SettingsRepository
+import dev.cherryd.unibot.core.Settings
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,18 +16,20 @@ import org.telegram.telegrambots.meta.generics.BotSession
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 
 internal class TelegramBot(
-    private val environment: Environment,
-    private val settingsRepository: SettingsRepository
+    private val environment: Environment
 ) : TelegramLongPollingBot(environment.get(TELEGRAM_API_KEY)) {
 
     private val logger = KotlinLogging.logger("TelegramBot")
     private val tgBotApi = TelegramBotsApi(DefaultBotSession::class.java)
     private var session: BotSession? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
-
     private val postingsFlow = MutableSharedFlow<Posting>()
-
     private val postingMediaMapper = PostingMediaMapper()
+
+    private val botSettings = Settings.Bot(
+        name = environment.get(TELEGRAM_BOT_NAME),
+        token = environment.get(TELEGRAM_API_KEY)
+    )
 
     fun start() {
         session?.stop()
@@ -46,23 +48,12 @@ internal class TelegramBot(
         coroutineScope.launch {
             logger.info { "Received Telegram Update: ${update.message.text}" }
 
-            val chat = update.getUniBotChat()
-            val from = update.toUser()
-            val settings = settingsRepository.getSettings(
-                userId = from.id,
-                chatId = chat.id,
-                botName = botUsername
-            )
-
+            val settings = Settings(botSettings)
             val media = postingMediaMapper.map(update, settings)
 
             val posting = Posting(
-                id = update.updateId.toString(),
-                from = from,
-                chat = chat,
-                media = media,
-                reply = null,
-                settings = settings
+                settings = settings,
+                content = media
             )
 
             postingsFlow.emit(posting)
