@@ -6,6 +6,6 @@ data class User(
     val role: Role
 ) {
     enum class Role {
-        USER, ADMIN, BOT
+        DEVELOPER, USER, ADMIN, BOT
     }
 }

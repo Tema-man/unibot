@@ -11,8 +11,15 @@ class Router(
 
     private val logger = KotlinLogging.logger { }
     fun pickPostingTransformer(posting: Posting): PostingTransformer {
-        logger.info { "Searching processor for a posting: $posting" }
+        val availableTransformers = transformers
+            .filter { it.getPriority(posting.settings) != PostingTransformer.Priority.DISABLED }
+            .ifEmpty { listOf(AntiDdosProtector()) }
+            .sortedByDescending { it.getPriority(posting.settings) }
 
-        return AntiDdosProtector()// if there is no intent processor ddos protector by default ?
+        val processor = availableTransformers.firstOrNull() ?: availableTransformers.random()
+
+        logger.info { "Selected transformer: ${processor.javaClass.name}" }
+
+        return processor
     }
 }

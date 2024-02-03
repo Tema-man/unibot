@@ -1,6 +1,7 @@
 package dev.cherryd.unibot.telegram
 
 import dev.cherryd.unibot.core.Chat
+import dev.cherryd.unibot.core.Settings
 import dev.cherryd.unibot.core.User
 import org.telegram.telegrambots.meta.api.objects.Update
 
@@ -22,7 +23,7 @@ internal fun Update.getUniBotChat(): Chat {
     )
 }
 
-internal fun Update.toUser(): User {
+internal fun Update.toUser(settings: Settings): User {
     val user = when {
         hasMessage() -> message.from
         hasEditedMessage() -> editedMessage.from
@@ -33,12 +34,13 @@ internal fun Update.toUser(): User {
     }
 
     val formattedName = (user.firstName.let { "$it " }) + (user.lastName ?: "")
-//        val isFromDeveloper = botConfig?.let { it.developer == user.userName } ?: false
     val role = when {
-//            isFromDeveloper -> User.Role.DEVELOPER
+        settings.developerName == user.userName -> User.Role.DEVELOPER
         user.isBot -> User.Role.BOT
+        chatMember.newChatMember.status in setOf("administrator", "creator") -> User.Role.ADMIN
         else -> User.Role.USER
     }
+
     return User(
         id = user.id.toString(),
         role = role,
@@ -46,6 +48,6 @@ internal fun Update.toUser(): User {
     )
 }
 
-
-
 internal fun Update.toCommand(botName: String): String? = message?.getCommand(botName)
+internal val Update.text: String
+    get() = message.text ?: ""

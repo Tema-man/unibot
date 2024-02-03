@@ -1,11 +1,13 @@
 package dev.cherryd.unibot.telegram
 
 import dev.cherryd.unibot.core.Posting
-import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.delay
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo
+import org.telegram.telegrambots.meta.api.objects.InputFile
 import org.telegram.telegrambots.meta.bots.AbsSender
+import java.io.File
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.ln
 
@@ -14,14 +16,32 @@ class PostingSender(
     private val tgSender: AbsSender
 ) {
 
-    private val logger = KotlinLogging.logger { }
-
     suspend fun send(posting: Posting) {
-        logger.info { "Sending posting: $posting" }
-
         when (val extra = posting.extra) {
             is Posting.Content.Extra.Text -> sendText(posting, extra.text)
+            is Posting.Content.Extra.Composite -> extra.content.forEach { send(posting.answer(it)) }
+            is Posting.Content.Extra.Video -> sendVideo(posting, extra.file)
             else -> {}
+        }
+    }
+
+    private fun sendVideo(posting: Posting, file: File) {
+        tgSender.execute(SendChatAction(posting.content.chat.id, "upload_video", null))
+        val video = SendVideo
+            .builder()
+            .video(InputFile(file))
+            .chatId(posting.content.chat.id)
+            .also {
+                runCatching { posting.content.id.toInt() }
+                    .getOrNull()
+                    ?.let { id -> it.replyToMessageId(id) }
+            }
+            .build()
+        tgSender.execute(video)
+        kotlin.runCatching {
+            file.delete()
+        }.getOrElse {
+            file.deleteOnExit()
         }
     }
 
