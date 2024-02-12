@@ -6,7 +6,8 @@ import dev.cherryd.unibot.telegram.TelegramRelay
 object RelaysModule {
 
     private val telegramRelay = TelegramRelay(
-        AppModule.environment
+        AppModule.environment,
+        RepositoriesModule.commandsRepository
     )
 
     fun provideRelays(): List<Relay> = listOf(
