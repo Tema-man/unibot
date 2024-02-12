@@ -14,8 +14,8 @@ kotlin-coroutines-bom = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-bom
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.2.0" }
 kotlin-serialisation-bom = { module = "org.jetbrains.kotlinx:kotlinx-serialization-bom", version.ref = "kotlin-serialization" }
-kotlin-serialisation-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core" }
-kotlin-serialisation-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json" }
+kotlin-serialisation-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlin-serialization" }
+kotlin-serialisation-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
 logging-kotlin = { module = "io.github.oshai:kotlin-logging-jvm", version = "5.1.0" }
 logging-logback = { module = "ch.qos.logback:logback-classic", version = "1.4.11" }
 testing-junit-bom = { module = "org.junit:junit-bom", version.ref = "jUnit5" }
@@ -24,6 +24,7 @@ testing-junit-engine-jupiter = { module = "org.junit.jupiter:junit-jupiter-engin
 testing-junit-engine-params = { module = "org.junit.jupiter:junit-jupiter-params" }
 redisson = { module = "org.redisson:redisson", version.ref = "redisson" }
 telegram-bots = { module = "org.telegram:telegrambots", version = "6.8.0" }
+tomlj = { module = "org.tomlj:tomlj", version = "1.1.1" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
