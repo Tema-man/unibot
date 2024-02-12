@@ -11,6 +11,6 @@ class CommandExtraParser : ExtraParser {
         if (!update.message.isCommand) return null
         val command = update.toCommand(settings.bot.name) ?: return null
 
-        return Posting.Content.Extra.Command(command = command, text = update.text)
+        return Posting.Content.Extra.Command(command = command.removePrefix("/"), text = update.text)
     }
 }

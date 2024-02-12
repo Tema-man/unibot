@@ -22,7 +22,6 @@ data class Posting(
             data class Text(val text: String) : Extra()
             data class Command(val command: String, val text: String) : Extra()
             data class Urls(val urls: List<String>, val text: String) : Extra()
-            data class Composite(val content: List<Extra>) : Extra()
             data class Video(val file: File) : Extra()
             data class Sticker(val stickerId: String) : Extra()
             data class Reaction(val emoji: String) : Extra()
@@ -31,6 +30,7 @@ data class Posting(
                 data class UserLeft(val user: User) : ChatEvent()
                 data object BotAdded : ChatEvent()
                 data object BotRemoved : ChatEvent()
+                data object SendingVideo : ChatEvent()
             }
         }
     }

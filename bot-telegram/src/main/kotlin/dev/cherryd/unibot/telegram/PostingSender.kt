@@ -11,7 +11,6 @@ import java.io.File
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.ln
 
-
 class PostingSender(
     private val tgSender: AbsSender
 ) {
@@ -19,14 +18,15 @@ class PostingSender(
     suspend fun send(posting: Posting) {
         when (val extra = posting.extra) {
             is Posting.Content.Extra.Text -> sendText(posting, extra.text)
-            is Posting.Content.Extra.Composite -> extra.content.forEach { send(posting.answer(it)) }
             is Posting.Content.Extra.Video -> sendVideo(posting, extra.file)
+            is Posting.Content.Extra.ChatEvent.SendingVideo -> {
+                tgSender.execute(SendChatAction(posting.content.chat.id, "upload_video", null))
+            }
             else -> {}
         }
     }
 
     private fun sendVideo(posting: Posting, file: File) {
-        tgSender.execute(SendChatAction(posting.content.chat.id, "upload_video", null))
         val video = SendVideo
             .builder()
             .video(InputFile(file))
@@ -49,7 +49,7 @@ class PostingSender(
         tgSender.sendInternal(
             chatId = posting.content.chat.id,
             text = text,
-            shouldTypeBeforeSend = true
+            shouldTypeBeforeSend = false
         )
     }
 

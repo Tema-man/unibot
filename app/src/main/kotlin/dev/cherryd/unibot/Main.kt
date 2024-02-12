@@ -12,9 +12,9 @@ fun main(args: Array<String>) {
     val unibot = Unibot(
         relays = RelaysModule.provideRelays(),
         router = RouterModule.provideRouter()
-    )
-
-    unibot.start()
+    ).apply {
+        start()
+    }
 
     while (true) {
         val input = readln()

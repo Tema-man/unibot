@@ -1,17 +1,24 @@
 package dev.cherryd.unibot.di
 
 import dev.cherryd.unibot.Router
-import dev.cherryd.unibot.processors.security.AntiDdosProtector
-import dev.cherryd.unibot.processors.tiktok.TikTokVideoDownloader
+import dev.cherryd.unibot.responder.help.HelpCommandResponder
+import dev.cherryd.unibot.responder.joinchat.JoinChatResponder
+import dev.cherryd.unibot.responder.quote.QuoteResponder
+import dev.cherryd.unibot.responder.quote.TopHistoryResponder
+import dev.cherryd.unibot.responder.security.AntiDdosProtector
+import dev.cherryd.unibot.responder.tiktok.TikTokVideoDownloader
 
 object RouterModule {
 
-    private val transformers = listOf(
+    val responders = listOf(
         AntiDdosProtector(),
-        TikTokVideoDownloader(AppModule.environment)
+        TikTokVideoDownloader(AppModule.ytDlpWrapper),
+        QuoteResponder(RepositoriesModule.quoteRepository),
+        JoinChatResponder(),
+        TopHistoryResponder(RepositoriesModule.quoteRepository)
     )
 
     fun provideRouter() = Router(
-        transformers
+        responders + HelpCommandResponder(RepositoriesModule.commandsRepository),
     )
 }

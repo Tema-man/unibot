@@ -13,9 +13,9 @@ class PostingMediaMapper(
         return mapMessage(update, settings, update.message)
     }
 
-    private fun mapMessage(update: Update, settings: Settings, message: Message): Posting.Content {
+    private fun mapMessage(update: Update, settings: Settings, message: Message?): Posting.Content {
         return Posting.Content(
-            id = message.messageId.toString(),
+            id = message?.messageId.toString(),
             sender = update.toUser(settings),
             chat = update.getUniBotChat(),
             extra = parseExtra(update, settings),
