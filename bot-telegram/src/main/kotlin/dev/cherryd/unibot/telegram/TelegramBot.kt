@@ -36,7 +36,8 @@ internal class TelegramBot(
 
     private val botSettings = Settings.Bot(
         name = environment.get(TELEGRAM_BOT_NAME),
-        token = environment.get(TELEGRAM_API_KEY)
+        token = environment.get(TELEGRAM_API_KEY),
+        commandPrefix = "/"
     )
 
     fun start() {

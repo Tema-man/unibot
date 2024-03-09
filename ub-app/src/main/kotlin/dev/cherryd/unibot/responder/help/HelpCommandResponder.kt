@@ -16,11 +16,10 @@ class HelpCommandResponder(
     override fun getPriority(settings: Settings) = Responder.Priority.HIGH
 
     override suspend fun handleCommand(flow: FlowCollector<Posting>, incoming: Posting) {
-        val message = """
-            Available commands:
-            ${commandsRepository.getCommands().joinToString("\n") { "/" + it.command + " - " + it.description }}
-            ${commandDescription.let { "/" + it.command + " - " + it.description }} 
-        """.trimIndent()
+        val prefix = incoming.settings.bot.commandPrefix
+        val message = "Available commands: \n\n" +
+                "${commandsRepository.getCommands().joinToString("\n") { prefix + it.command + " - " + it.description }} \n" +
+                commandDescription.let { prefix + it.command + " - " + it.description }
 
         flow.emit(incoming.answer(Posting.Content.Extra.Text(message)))
     }

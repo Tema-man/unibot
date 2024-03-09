@@ -6,6 +6,7 @@ data class Settings(
 ) {
     data class Bot(
         val name: String,
-        val token: String
+        val token: String,
+        val commandPrefix: String
     )
 }

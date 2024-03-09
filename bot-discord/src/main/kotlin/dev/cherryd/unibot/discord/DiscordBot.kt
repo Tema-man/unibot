@@ -33,7 +33,8 @@ class DiscordBot(
 
     private val botSettings = Settings.Bot(
         name = environment.get(DISCORD_BOT_NAME),
-        token = environment.get(DISCORD_BOT_TOKEN)
+        token = environment.get(DISCORD_BOT_TOKEN),
+        commandPrefix = "!"
     )
 
     fun start() {
