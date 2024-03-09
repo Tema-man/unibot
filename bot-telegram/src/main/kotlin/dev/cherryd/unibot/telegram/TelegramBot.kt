@@ -59,7 +59,7 @@ internal class TelegramBot(
             logger.info { "Received Telegram Update: ${update.message.text}" }
 
             val settings = Settings(
-                developerName = environment.get(DEVELOPER_NAME),
+                developerName = environment.get(TELEGRAM_DEVELOPER_NAME),
                 bot = botSettings
             )
             val media = postingMediaMapper.map(update, settings)
@@ -78,6 +78,6 @@ internal class TelegramBot(
     private companion object {
         const val TELEGRAM_API_KEY = "TELEGRAM_API_KEY"
         const val TELEGRAM_BOT_NAME = "TELEGRAM_BOT_NAME"
-        const val DEVELOPER_NAME = "DEVELOPER_NAME"
+        const val TELEGRAM_DEVELOPER_NAME = "TELEGRAM_DEVELOPER_NAME"
     }
 }

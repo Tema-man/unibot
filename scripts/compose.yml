@@ -1,0 +1,20 @@
+version: "3.3"
+
+services:
+  unibot:
+    container_name: unibot
+    networks:
+      unibot-net:
+    build:
+      dockerfile: scripts/Dockerfile
+      context: ..
+    restart: unless-stopped
+    env_file:
+      - scripts/.env
+    environment:
+      - JDBC_URL=jdbc:postgresql://family-db:5432/${POSTGRES_DB}
+
+networks:
+  unibot-net:
+    driver: bridge
+

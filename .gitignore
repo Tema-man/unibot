@@ -18,6 +18,7 @@ logs
 **/hs_err*.log
 *.tmp
 *.jar
+*.env
 
 ### Mac OS ###
 .DS_Store
