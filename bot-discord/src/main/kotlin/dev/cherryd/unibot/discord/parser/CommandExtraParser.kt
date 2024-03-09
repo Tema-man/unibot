@@ -9,7 +9,7 @@ class CommandExtraParser : DiscordExtraParser {
         val message = (event as? MessageCreateEvent)?.message ?: return null
         val content = message.content
         if (!content.startsWith("!")) return null
-        val command = content.substringBefore(" ")
+        val command = content.substringBefore(" ").removePrefix("!")
         return Posting.Content.Extra.Command(command, content)
     }
 }

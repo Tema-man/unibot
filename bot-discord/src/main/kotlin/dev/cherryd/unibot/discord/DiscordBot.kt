@@ -6,14 +6,19 @@ import dev.cherryd.unibot.core.Settings
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.event.Event
+import dev.kord.core.event.message.MessageCreateEvent
+import dev.kord.core.on
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
 import dev.kord.rest.builder.message.AttachmentBuilder
 import dev.kord.rest.builder.message.create.UserMessageCreateBuilder
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.runBlocking
 
 
 class DiscordBot(
@@ -35,15 +40,14 @@ class DiscordBot(
         runBlocking {
             kord = Kord(botSettings.token)
 
+            kord.on<MessageCreateEvent> {
+                if (message.author?.isBot == true) return@on
+                handleEvent(this)
+            }
+
             kord.login {
                 @OptIn(PrivilegedIntent::class)
                 intents += Intent.MessageContent
-            }
-        }
-
-        coroutineScope.launch {
-            kord.events.collect { event ->
-                handleEvent(event)
             }
         }
     }

@@ -17,7 +17,6 @@ class Unibot(
 
     fun start() {
         relays.forEach { relay -> startRelayJob(relay) }
-        relays.forEach { it.afterStartSetup() }
     }
 
     fun stop() {
@@ -25,8 +24,8 @@ class Unibot(
         scope.coroutineContext.cancelChildren()
     }
 
-    @OptIn(FlowPreview::class)
-    private fun startRelayJob(relay: Relay) {
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    private fun startRelayJob(relay: Relay) = runCatching {
         relay.incomingPostingsFlow()
             .flatMapMerge { posting -> handle(posting) }
             .filterNotNull()
@@ -39,6 +38,9 @@ class Unibot(
             .launchIn(scope)
 
         relay.start()
+        relay.afterStartSetup()
+    }.onFailure { cause ->
+        log.error { "Failed to start relay ${relay.javaClass.name}. Cause: $cause" }
     }
 
     private fun handle(incoming: Posting): Flow<Posting> {
