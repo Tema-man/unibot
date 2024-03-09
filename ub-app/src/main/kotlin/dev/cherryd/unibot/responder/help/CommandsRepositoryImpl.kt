@@ -4,7 +4,7 @@ import dev.cherryd.unibot.core.CommandDescription
 import dev.cherryd.unibot.core.CommandResponder
 import dev.cherryd.unibot.core.CommandsRepository
 
-class CommandsRepositoryImpl constructor(
+class CommandsRepositoryImpl(
     private val commands: List<CommandResponder>
 ) : CommandsRepository {
 

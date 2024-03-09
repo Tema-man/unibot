@@ -18,6 +18,7 @@ class YtDlpWrapper(
     private val fileDeleteScope = CoroutineScope(Dispatchers.Default)
 
     fun available(): Boolean = ytdlLocation.isNotBlank()
+
     fun downloadVideo(url: String, vararg params: String): File {
         return download("${UUID.randomUUID()}.%(ext)s", url, *params)
     }

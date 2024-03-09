@@ -3,7 +3,7 @@ package dev.cherryd.unibot.responder.quote
 import dev.cherryd.unibot.core.*
 import kotlinx.coroutines.flow.FlowCollector
 
-class QuoteResponder constructor(
+class QuoteResponder(
     private val quoteRepository: QuoteRepository
 ) : CommandResponder() {
 

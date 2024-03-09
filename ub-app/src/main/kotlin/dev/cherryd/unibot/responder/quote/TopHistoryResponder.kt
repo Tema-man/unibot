@@ -3,7 +3,7 @@ package dev.cherryd.unibot.responder.quote
 import dev.cherryd.unibot.core.*
 import kotlinx.coroutines.flow.FlowCollector
 
-class TopHistoryResponder constructor(
+class TopHistoryResponder(
     private val repository: QuoteRepository
 ) : CommandResponder() {
 

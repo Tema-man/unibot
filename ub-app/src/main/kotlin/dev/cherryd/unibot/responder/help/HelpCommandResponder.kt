@@ -3,7 +3,7 @@ package dev.cherryd.unibot.responder.help
 import dev.cherryd.unibot.core.*
 import kotlinx.coroutines.flow.FlowCollector
 
-class HelpCommandResponder constructor(
+class HelpCommandResponder(
     private val commandsRepository: CommandsRepository
 ) : CommandResponder() {
 
