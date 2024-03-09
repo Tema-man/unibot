@@ -25,17 +25,14 @@ class PostingMapper(
             id = converter.toMessageId(event),
             sender = converter.toUser(event),
             chat = converter.toChat(event),
-            extra = parseExtra(),
+            extra = event.parseExtra(),
             reply = parseReply()
         )
     }
 
-    private fun parseExtra() =
-        parsers.firstNotNullOfOrNull { it.parse() }
-            ?: Posting.Content.Extra.Text("")
+    private fun Event.parseExtra() = parsers.firstNotNullOfOrNull { it.parse(this) } ?: Posting.Content.Extra.Text("")
 
     private fun parseReply(): Posting.Content? {
-        Triple(1, 2, 3)
         return null
     }
 }

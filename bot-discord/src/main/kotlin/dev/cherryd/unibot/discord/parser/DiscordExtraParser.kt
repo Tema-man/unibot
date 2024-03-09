@@ -1,8 +1,8 @@
 package dev.cherryd.unibot.discord.parser
 
 import dev.cherryd.unibot.core.Posting
-import dev.kord.core.entity.Message
+import dev.kord.core.event.Event
 
 interface DiscordExtraParser {
-    fun parse(message: Message): Posting.Content.Extra?
+    fun parse(event: Event): Posting.Content.Extra?
 }
