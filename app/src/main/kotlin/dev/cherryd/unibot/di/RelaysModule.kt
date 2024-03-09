@@ -1,6 +1,7 @@
 package dev.cherryd.unibot.di
 
 import dev.cherryd.unibot.core.Relay
+import dev.cherryd.unibot.discord.DiscordRelay
 import dev.cherryd.unibot.telegram.TelegramRelay
 
 object RelaysModule {
@@ -10,7 +11,13 @@ object RelaysModule {
         RepositoriesModule.commandsRepository
     )
 
+    private val discordRelay = DiscordRelay(
+        AppModule.environment,
+        RepositoriesModule.commandsRepository
+    )
+
     fun provideRelays(): List<Relay> = listOf(
-        telegramRelay
+        telegramRelay,
+        discordRelay
     )
 }
