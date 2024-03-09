@@ -5,6 +5,6 @@ RUN gradle build --no-daemon
 
 FROM arm64v8/openjdk:17-jdk-slim
 RUN mkdir /app
-COPY --from=build /home/gradle/src/build/libs/*.jar /app/
+COPY --from=build /home/gradle/app/build/libs/*.jar /app/
 
-ENTRYPOINT ["java", "-jar", "/app/spring-boot-application.jar"]
+ENTRYPOINT ["java", "-jar", "/app/unibot-app-1.0.0.jar"]

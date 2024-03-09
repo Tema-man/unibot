@@ -1,5 +1,8 @@
-group = "dev.cherryd"
-version = "1.0.0"
+base {
+    group = "dev.cherryd"
+    archivesName = "unibot-app"
+    version = "1.0.0"
+}
 
 plugins {
     id("application-conventions")
@@ -13,6 +16,7 @@ dependencies {
     implementation(libs.kotlin.coroutines.core)
 
     implementation(project(":bot-telegram"))
+    implementation(project(":bot-discord"))
     implementation(project(":ub-core"))
     implementation(project(":ub-app"))
 }
