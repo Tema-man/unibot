@@ -4,26 +4,16 @@ import dev.cherryd.unibot.di.RelaysModule
 import dev.cherryd.unibot.di.RouterModule
 import io.github.oshai.kotlinlogging.KotlinLogging
 
-
-fun main(args: Array<String>) {
+fun main() {
 
     val logger = KotlinLogging.logger { }
     logger.info { "Starting UniBot Application" }
 
-    val unibot = Unibot(
+    Unibot(
         relays = RelaysModule.provideRelays(),
         router = RouterModule.provideRouter()
     ).apply {
         start()
-    }
-
-    while (true) {
-        val input = readln()
-        if (input.equals("q", ignoreCase = true)) {
-            logger.info { "Quiting the app" }
-            unibot.stop()
-            break
-        }
     }
 }
 
