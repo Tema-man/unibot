@@ -1,6 +1,5 @@
 base {
     group = "dev.cherryd"
-    archivesName = "unibot-app"
     version = "1.0.0"
 }
 
@@ -23,4 +22,9 @@ dependencies {
 
 application {
     mainClass.set("dev.cherryd.MainKt")
+}
+
+tasks.withType<Jar> {
+    archiveFileName.set("unibot.jar")
+    destinationDirectory.set(File("$rootDir/output"))
 }

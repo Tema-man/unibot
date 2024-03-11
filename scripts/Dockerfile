@@ -10,6 +10,6 @@ ADD "https://api.github.com/repos/yt-dlp/yt-dlp/releases?per_page=1" latest_rele
 RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
 RUN chmod a+rx /usr/local/bin/yt-dlp
 RUN mkdir /app
-COPY --from=build /home/gradle/src/unibot/app/build/libs/*.jar /app/
+COPY --from=build /home/gradle/src/unibot/output/*.jar /app/
 
-ENTRYPOINT ["java", "-jar", "/app/unibot-app-1.0.0.jar"]
+ENTRYPOINT ["java", "-jar", "/app/unibot.jar"]
