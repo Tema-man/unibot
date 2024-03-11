@@ -16,5 +16,6 @@ services:
 
 networks:
   unibot-net:
+    name: "unibot-net"
     driver: bridge
 
