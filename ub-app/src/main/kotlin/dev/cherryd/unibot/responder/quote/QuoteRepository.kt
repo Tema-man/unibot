@@ -31,7 +31,7 @@ class QuoteRepository {
 
         quotes[MAMOEB] = mamoeb.curses.map { it }
 
-        flattenQuotes = quotes.values.flatten()
+        flattenQuotes = quotes.filterKeys { it != MAMOEB }.values.flatten()
     }
 
     private fun map(row: TomlTable): Pair<String, String> {
