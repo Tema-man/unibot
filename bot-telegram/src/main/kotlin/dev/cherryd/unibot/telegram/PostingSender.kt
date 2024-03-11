@@ -17,12 +17,12 @@ class PostingSender(
 
     suspend fun send(posting: Posting) {
         when (val extra = posting.extra) {
-            is Posting.Content.Extra.Text -> sendText(posting, extra.text)
             is Posting.Content.Extra.Video -> sendVideo(posting, extra.file)
             is Posting.Content.Extra.ChatEvent.SendingVideo -> {
                 tgSender.execute(SendChatAction(posting.content.chat.id, "upload_video", null))
             }
-            else -> {}
+
+            else -> if (extra.text.isNotBlank()) sendText(posting, extra.text)
         }
     }
 

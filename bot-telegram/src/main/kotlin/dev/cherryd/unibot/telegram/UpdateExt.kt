@@ -3,13 +3,18 @@ package dev.cherryd.unibot.telegram
 import dev.cherryd.unibot.core.Chat
 import dev.cherryd.unibot.core.Settings
 import dev.cherryd.unibot.core.User
+import org.telegram.telegrambots.meta.api.objects.InaccessibleMessage
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 
 internal fun Update.getUniBotChat(): Chat {
     val tgChat = when {
         hasMessage() -> message.chat
         hasEditedMessage() -> editedMessage.chat
-        else -> callbackQuery.message.chat
+        else -> when (val message = callbackQuery.message) {
+            is Message -> message.chat
+            else -> (message as InaccessibleMessage).chat
+        }
     }
 
     return Chat(

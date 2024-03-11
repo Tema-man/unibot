@@ -44,11 +44,12 @@ internal class TelegramBot(
         logger.info { "Starting Telegram bot." }
         session?.stop()
         session = tgBotApi.registerBot(this)
+        logger.info { "Telegram bot started." }
     }
 
     fun stop() {
         logger.info { "Stopping Telegram bot. It might take some time." }
-        if(session?.isRunning == true) session?.stop()
+        if (session?.isRunning == true) session?.stop()
         coroutineScope.cancel()
     }
 

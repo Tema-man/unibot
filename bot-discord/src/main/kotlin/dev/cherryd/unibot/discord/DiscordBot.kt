@@ -66,18 +66,11 @@ class DiscordBot(
         val snowflake = Snowflake(posting.content.chat.id)
 
         val request = UserMessageCreateBuilder().apply {
-            content = posting.content.extra.mapText()
+            content = posting.content.extra.text
             attachments = posting.content.extra.mapAttachments(snowflake)
         }.toRequest()
 
         kord.rest.channel.createMessage(snowflake, request)
-    }
-
-    private fun Posting.Content.Extra.mapText(): String? = when (this) {
-        is Posting.Content.Extra.Text -> text
-        is Posting.Content.Extra.Command -> text
-        is Posting.Content.Extra.Urls -> text
-        else -> null
     }
 
     private fun Posting.Content.Extra.mapAttachments(snowflake: Snowflake): MutableList<AttachmentBuilder> {
