@@ -12,10 +12,13 @@ class TopHistoryResponder(
     override val commandDescription = CommandDescription(
         command = "top_history",
         description = "Sends a random curse",
-        usage = """
-            just call top_history for a random curse
-            or call top_history @username to curse someone
-        """.trimIndent()
+        arguments = listOf(
+            CommandDescription.Argument("mention", "Curse the user with a random curse")
+        ),
+        examples = listOf(
+            "top_history # Sends a random curse",
+            "top_history @username # Curse the user with a random curse"
+        )
     )
 
     override suspend fun handleCommand(flow: FlowCollector<Posting>, incoming: Posting) {
@@ -34,6 +37,6 @@ class TopHistoryResponder(
             curse
         }
 
-        flow.emit(incoming.answer(Posting.Content.Extra.Text(text)))
+        flow.emit(incoming.textAnswer { text })
     }
 }
