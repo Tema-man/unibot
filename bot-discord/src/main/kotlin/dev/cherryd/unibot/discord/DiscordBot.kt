@@ -18,7 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 
 
 class DiscordBot(
@@ -27,9 +27,9 @@ class DiscordBot(
 ) {
 
     private val logger = KotlinLogging.logger("DiscordBot")
-    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val postingsFlow = MutableSharedFlow<Posting>()
     private lateinit var kord: Kord
+    private val postingScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private val botSettings = Settings.Bot(
         name = environment.get(DISCORD_BOT_NAME),
@@ -37,26 +37,27 @@ class DiscordBot(
         commandPrefix = "!"
     )
 
-    fun start() {
-        runBlocking {
-            kord = Kord(botSettings.token)
+    suspend fun start() {
+        logger.info { "Starting Discord bot" }
+        kord = Kord(botSettings.token)
 
-            kord.on<MessageCreateEvent> {
-                if (message.author?.isBot == true) return@on
-                handleEvent(this)
-            }
+        kord.on<MessageCreateEvent>(scope = postingScope) {
+            if (message.author?.isBot == true) return@on
+            handleEvent(this@on)
+        }
 
+        postingScope.launch {
             kord.login {
                 @OptIn(PrivilegedIntent::class)
                 intents += Intent.MessageContent
             }
         }
+        logger.info { "Discord bot started" }
     }
 
-    fun stop() {
-        runBlocking {
-            kord.logout()
-        }
+    suspend fun stop() {
+        logger.info { "Stopping Discord bot" }
+        kord.logout()
     }
 
     fun observePostings(): Flow<Posting> = postingsFlow
@@ -89,6 +90,7 @@ class DiscordBot(
     }
 
     private suspend fun handleEvent(event: Event) {
+        logger.info { "Received Discord event: $event" }
         val settings = Settings(
             developerName = environment.get(DISCORD_DEVELOPER_NAME),
             bot = botSettings

@@ -6,6 +6,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 
 
 fun main(args: Array<String>) {
+
     val logger = KotlinLogging.logger { }
     logger.info { "Starting UniBot Application" }
 

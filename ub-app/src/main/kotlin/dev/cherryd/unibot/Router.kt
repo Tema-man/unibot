@@ -9,7 +9,8 @@ class Router(
     private val responders: List<Responder>
 ) {
 
-    private val logger = KotlinLogging.logger { }
+    private val logger = KotlinLogging.logger("Router")
+
     fun pickResponder(posting: Posting): Responder {
         val availableTransformers = responders
             .filter {

@@ -25,19 +25,19 @@ class DiscordRelay(
         discordBot.post(posting)
     }
 
-    override fun start() {
+    override suspend fun start() {
         discordBot.start()
     }
 
-    override fun afterStartSetup() {
+    override suspend fun afterStartSetup() {
 
     }
 
-    override fun stop() {
+    override suspend fun stop() {
         discordBot.stop()
     }
 
-    override fun restart() {
+    override suspend fun restart() {
         stop()
         start()
     }

@@ -18,7 +18,6 @@ class TelegramRelay(
 ) : Relay {
 
     private val tgBot = TelegramBot(environment)
-
     private val postingSender = PostingSender(tgBot)
 
     override fun incomingPostingsFlow(): Flow<Posting> = tgBot.observePostings()
@@ -27,7 +26,7 @@ class TelegramRelay(
         postingSender.send(posting)
     }
 
-    override fun afterStartSetup() {
+    override suspend fun afterStartSetup() {
         tgBot.execute(DeleteMyCommands.builder().scope(BotCommandScopeAllGroupChats()).build())
         tgBot.execute(DeleteMyCommands.builder().scope(BotCommandScopeAllPrivateChats()).build())
         tgBot.execute(DeleteMyCommands.builder().scope(BotCommandScopeDefault()).build())
@@ -41,17 +40,16 @@ class TelegramRelay(
         )
     }
 
-    override fun start() {
+    override suspend fun start() {
         tgBot.start()
     }
 
-    override fun stop() {
+    override suspend fun stop() {
         tgBot.stop()
     }
 
-    override fun restart() {
+    override suspend fun restart() {
         tgBot.stop()
         tgBot.start()
     }
-
 }

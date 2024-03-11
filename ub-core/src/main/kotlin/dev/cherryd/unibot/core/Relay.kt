@@ -10,8 +10,8 @@ interface Relay {
     fun incomingPostingsFlow(): Flow<Posting>
     suspend fun post(posting: Posting)
 
-    fun start()
-    fun afterStartSetup()
-    fun stop()
-    fun restart()
+    suspend fun start()
+    suspend fun afterStartSetup()
+    suspend fun stop()
+    suspend fun restart()
 }
