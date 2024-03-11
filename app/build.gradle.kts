@@ -27,4 +27,10 @@ application {
 tasks.withType<Jar> {
     archiveFileName.set("unibot.jar")
     destinationDirectory.set(File("$rootDir/output"))
+    manifest {
+        attributes("Main-Class" to "dev.cherryd.unibot.MainKt")
+    }
+    dependsOn(configurations.runtimeClasspath)
+    from(configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
