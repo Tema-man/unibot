@@ -6,19 +6,29 @@ import dev.cherryd.unibot.responder.joinchat.JoinChatResponder
 import dev.cherryd.unibot.responder.quote.QuoteResponder
 import dev.cherryd.unibot.responder.quote.TopHistoryResponder
 import dev.cherryd.unibot.responder.security.AntiDdosProtector
+import dev.cherryd.unibot.responder.talking.HuificatorResponder
 import dev.cherryd.unibot.responder.tiktok.TikTokVideoDownloader
 
 object RouterModule {
 
+    val antiDdosProtector = AntiDdosProtector(AppModule.dictionary)
+
     val responders = listOf(
-        AntiDdosProtector(),
+        antiDdosProtector,
         TikTokVideoDownloader(AppModule.ytDlpWrapper),
         QuoteResponder(RepositoriesModule.quoteRepository),
         JoinChatResponder(),
-        TopHistoryResponder(RepositoriesModule.quoteRepository)
+        TopHistoryResponder(RepositoriesModule.quoteRepository),
+        HuificatorResponder()
+    )
+
+    private val helpCommandResponder = HelpCommandResponder(
+        commandsRepository = RepositoriesModule.commandsRepository,
+        dictionary = AppModule.dictionary,
     )
 
     fun provideRouter() = Router(
-        responders + HelpCommandResponder(RepositoriesModule.commandsRepository),
+        responders = responders + helpCommandResponder,
+        antiDdosProtector = antiDdosProtector
     )
 }
