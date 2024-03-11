@@ -4,9 +4,6 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.kotlin.lang)
-    implementation(libs.logging.kotlin)
-    implementation(libs.logging.logback)
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.kotlin.serialisation.bom)
     implementation(libs.kotlin.serialisation.json)

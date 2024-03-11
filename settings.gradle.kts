@@ -1,9 +1,7 @@
 rootProject.name = "unibot"
 
-include(
-    "app",
-    "ub-app",
-    "ub-core",
-    "bot-telegram",
-    "bot-discord"
-)
+include("app")
+include("ub-app")
+include("ub-core")
+include("bot-telegram")
+include("bot-discord")

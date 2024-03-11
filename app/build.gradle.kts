@@ -8,9 +8,7 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.kotlin.lang)
     implementation(libs.telegram.bots)
-    implementation(libs.logging.kotlin)
     implementation(libs.logging.logback)
     implementation(libs.kotlin.coroutines.core)
 
@@ -21,7 +19,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("dev.cherryd.MainKt")
+    mainClass.set("dev.cherryd.unibot.MainKt")
 }
 
 tasks.withType<Jar> {
