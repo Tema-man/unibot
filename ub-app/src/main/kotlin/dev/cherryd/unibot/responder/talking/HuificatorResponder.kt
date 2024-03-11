@@ -10,6 +10,9 @@ import java.util.concurrent.ThreadLocalRandom
 
 class HuificatorResponder : Responder {
 
+    @Volatile
+    private var nextProbability: Float = 0.2f
+
     override fun getPriority(settings: Settings) = Responder.Priority.MEDIUM
 
     override fun canHandle(posting: Posting): Boolean = shouldHuificate(posting)
@@ -45,11 +48,17 @@ class HuificatorResponder : Responder {
         if (onlyDashes.matches(wordLowerCase)) return false
         if (wordLowerCase.startsWith("ху", true)) return false
 
-        return randomBoolean()
+        return checkRandom()
     }
 
-    private fun randomBoolean(probability: Float = 0.2f): Boolean =
-        ThreadLocalRandom.current().nextFloat(0f, 1f) <= probability
+    @Synchronized
+    private fun checkRandom(): Boolean {
+        val random = ThreadLocalRandom.current()
+        nextProbability += random.nextFloat(0f, 0.01f)
+        if (nextProbability > 0.9f) nextProbability = 0.2f
+
+        return random.nextFloat(0f, 1f) <= nextProbability
+    }
 
     private fun String?.dropLastDelimiter(): String? {
         if (this.isNullOrEmpty()) return this

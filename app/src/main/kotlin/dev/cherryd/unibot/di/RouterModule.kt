@@ -6,12 +6,17 @@ import dev.cherryd.unibot.responder.joinchat.JoinChatResponder
 import dev.cherryd.unibot.responder.quote.QuoteResponder
 import dev.cherryd.unibot.responder.quote.TopHistoryResponder
 import dev.cherryd.unibot.responder.security.AntiDdosProtector
+import dev.cherryd.unibot.responder.security.UserCommandHistory
 import dev.cherryd.unibot.responder.talking.HuificatorResponder
 import dev.cherryd.unibot.responder.tiktok.TikTokVideoDownloader
 
 object RouterModule {
 
-    val antiDdosProtector = AntiDdosProtector(AppModule.dictionary)
+    private val userCommandHistory = UserCommandHistory()
+    private val antiDdosProtector = AntiDdosProtector(
+        dictionary = AppModule.dictionary,
+        userCommandHistory = userCommandHistory
+    )
 
     val responders = listOf(
         antiDdosProtector,
