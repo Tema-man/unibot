@@ -6,7 +6,7 @@ services:
     networks:
       unibot-net:
     build:
-      dockerfile: Dockerfile
+      dockerfile: scripts/Dockerfile
       context: ..
     restart: unless-stopped
     env_file:
