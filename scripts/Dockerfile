@@ -1,6 +1,8 @@
 FROM gradle:jdk17-jammy AS build
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
+RUN chmod a+rw gradlew
+RUN gradle wrapper
 RUN ./gradlew build --no-daemon
 
 FROM arm64v8/openjdk:17-jdk-slim
