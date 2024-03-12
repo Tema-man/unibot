@@ -5,12 +5,14 @@ base {
 
 plugins {
     id("application-conventions")
+    alias(libs.plugins.ktor) apply false
 }
 
 dependencies {
-    implementation(libs.telegram.bots)
     implementation(libs.logging.logback)
-    implementation(libs.kotlin.coroutines.core)
+    implementation(libs.ktor.core)
+    implementation(libs.ktor.cio)
+    implementation(libs.ktor.micrometer)
 
     implementation(project(":bot-telegram"))
     implementation(project(":bot-discord"))
@@ -20,6 +22,9 @@ dependencies {
 
 application {
     mainClass.set("dev.cherryd.unibot.MainKt")
+
+    val isDevelopment: Boolean = project.ext.has("development")
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
 tasks.withType<Jar> {

@@ -3,6 +3,10 @@ version: "3.3"
 services:
   unibot:
     container_name: unibot
+    stdin_open: true
+    tty: true
+    ports:
+      - "10100:8080"
     networks:
       unibot-net:
     build:
@@ -13,9 +17,10 @@ services:
       - .env
       - telegram.env
       - discord.env
+    volumes:
+      - logs:/var/log/unibot
 
 networks:
   unibot-net:
     name: "unibot-net"
     driver: bridge
-

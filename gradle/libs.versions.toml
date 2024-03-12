@@ -6,6 +6,7 @@ jUnit5 = "5.9.2"
 kotlin = "1.9.22"
 kotlin-serialization = "1.5.1"
 redisson = "3.23.5"
+ktor = "2.3.9"
 
 [libraries]
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom" }
@@ -17,17 +18,28 @@ kotlin-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version =
 kotlin-serialisation-bom = { module = "org.jetbrains.kotlinx:kotlinx-serialization-bom", version.ref = "kotlin-serialization" }
 kotlin-serialisation-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlin-serialization" }
 kotlin-serialisation-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+
 logging-kotlin = { module = "io.github.oshai:kotlin-logging-jvm", version = "5.1.0" }
 logging-logback = { module = "ch.qos.logback:logback-classic", version = "1.5.3" }
 testing-junit-bom = { module = "org.junit:junit-bom", version.ref = "jUnit5" }
 testing-junit-api = { module = "org.junit.jupiter:junit-jupiter-api" }
 testing-junit-engine-jupiter = { module = "org.junit.jupiter:junit-jupiter-engine" }
 testing-junit-engine-params = { module = "org.junit.jupiter:junit-jupiter-params" }
+
 redisson = { module = "org.redisson:redisson", version.ref = "redisson" }
 telegram-bots = { module = "org.telegram:telegrambots", version = "6.9.7.1" }
+apache-commons-codec = { module = "commons-codec:commons-codec", version = "1.16.1" }
 tomlj = { module = "org.tomlj:tomlj", version = "1.1.1" }
 kord = { module = "dev.kord:kord-core", version = "0.13.1" }
+
+ktor-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-micrometer = { module = "io.ktor:ktor-server-metrics-micrometer-jvm", version.ref = "ktor" }
+ktor-cio = { module = "io.ktor:ktor-server-cio-jvm", version.ref = "ktor" }
+ktor-tests = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "ktor" }
+micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version = "1.12.4" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }

@@ -8,9 +8,10 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.kotlin.lang)
     implementation(libs.logging.kotlin)
-//    implementation(libs.logging.logback)
+    implementation(libs.micrometer.prometheus)
+    implementation(libs.kotlin.lang)
+    implementation(libs.kotlin.coroutines.core)
 }
 
 repositories {

@@ -3,14 +3,17 @@ package dev.cherryd.unibot
 import dev.cherryd.unibot.core.Posting
 import dev.cherryd.unibot.core.Relay
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.util.concurrent.TimeUnit
 
 class Unibot(
     relays: List<Relay>,
-    private val router: Router
+    private val router: Router,
+    private val meterRegistry: MeterRegistry
 ) {
 
     private val log = KotlinLogging.logger("Unibot")
@@ -20,7 +23,7 @@ class Unibot(
 
     fun isRunning() = relayScope.isActive
 
-    fun start() {
+    fun start() = meterRegistry.timer("unibot.startup").recordCallable {
         log.info { "Starting relays" }
         val iterator = workingRelays.iterator()
         while (iterator.hasNext()) {
@@ -66,9 +69,18 @@ class Unibot(
     }
 
     private fun handle(incoming: Posting): Flow<Posting> {
+        val startTime = System.currentTimeMillis()
+        val pickTimer = meterRegistry.timer("unibot.pickResponder")
         log.info { "Received posting: $incoming" }
         val responder = router.pickResponder(incoming)
         log.info { "Picked responder: $responder" }
+        pickTimer.record(System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS)
+
+        val respondTimer = meterRegistry.timer("unibot.response", "responder", responder.javaClass.name)
         return responder.responseStream(incoming)
+            .onEach { posting ->
+                log.info { "Responding with: $posting" }
+                respondTimer.record(System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS)
+            }
     }
 }
