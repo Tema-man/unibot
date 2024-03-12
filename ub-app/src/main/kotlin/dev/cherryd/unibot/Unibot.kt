@@ -18,6 +18,8 @@ class Unibot(
     private val mutex = Mutex()
     private val workingRelays = relays.toMutableList()
 
+    fun isRunning() = relayScope.isActive
+
     fun start() {
         log.info { "Starting relays" }
         val iterator = workingRelays.iterator()
