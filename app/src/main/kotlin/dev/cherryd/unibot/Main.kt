@@ -26,11 +26,7 @@ fun main() {
         start()
     }
 
-    embeddedServer(CIO,
-        port = 8080,
-        host = "0.0.0.0",
-        module = { module() }
-    ).start(wait = true)
+    embeddedServer(CIO, module = { module() }).start(wait = true)
 
     unibot.stop()
 }
