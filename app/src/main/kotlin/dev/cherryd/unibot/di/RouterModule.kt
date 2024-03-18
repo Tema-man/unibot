@@ -33,7 +33,6 @@ object RouterModule {
     )
 
     fun provideRouter() = Router(
-        responders = responders + helpCommandResponder,
-        antiDdosProtector = antiDdosProtector
+        responders = responders + helpCommandResponder
     )
 }

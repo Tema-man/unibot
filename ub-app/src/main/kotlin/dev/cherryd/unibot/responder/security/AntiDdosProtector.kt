@@ -15,16 +15,17 @@ class AntiDdosProtector(
     private val userCommandHistory: UserCommandHistory
 ) : Responder {
 
-    override fun getPriority(settings: Settings) = Priority.LOW
+    override fun getPriority(settings: Settings) = Priority.HIGH
 
-    override fun canHandle(posting: Posting): Boolean = true
+    override fun canHandle(posting: Posting): Boolean =
+        posting.extra is Posting.Content.Extra.Command && posting.isUserBlocked
 
     override fun responseStream(incoming: Posting): Flow<Posting> {
-        if(incoming.extra !is Posting.Content.Extra.Command) return emptyFlow()
-        if (!incoming.isUserBlocker) return emptyFlow()
+        if (incoming.extra !is Posting.Content.Extra.Command) return emptyFlow()
+        if (!incoming.isUserBlocked) return emptyFlow()
         return flowOf(dictionary.phraseAnswer(Phrase.STOP_DDOS, incoming))
     }
 
-    private val Posting.isUserBlocker: Boolean
+    private val Posting.isUserBlocked: Boolean
         get() = userCommandHistory.checkUserCommandLimit(content.sender.id)
 }
