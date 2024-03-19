@@ -13,4 +13,4 @@ RUN chmod a+rx /usr/local/bin/yt-dlp
 RUN mkdir /app
 COPY --from=build /home/gradle/src/output/*.jar /app/
 
-ENTRYPOINT ["java", "-jar", "/app/unibot.jar"]
+ENTRYPOINT ["java", "-server", "-Xmx128m", "-jar", "/app/unibot.jar"]
