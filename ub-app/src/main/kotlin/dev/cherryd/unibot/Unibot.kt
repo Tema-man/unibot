@@ -80,6 +80,8 @@ class Unibot(
         return responder.responseStream(incoming)
             .onEach { posting ->
                 log.info { "Responding with: $posting" }
+            }
+            .onCompletion {
                 respondTimer.record(System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS)
             }
     }
