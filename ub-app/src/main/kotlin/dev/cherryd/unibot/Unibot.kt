@@ -69,9 +69,7 @@ class Unibot(
     }
 
     private fun handle(incoming: Posting): Flow<Posting> {
-        log.info { "Received posting: $incoming" }
-        val responder = router.pickResponder(incoming)
-        log.info { "Picked responder: $responder" }
+        val responder = router.pickResponder(incoming) ?: return emptyFlow()
 
         val startTime = System.currentTimeMillis()
         val respondTimer = meter.timer("unibot.response", "responder", responder.javaClass.name)

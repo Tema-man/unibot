@@ -14,7 +14,7 @@ class TikTokVideoDownloader(
 
     override fun getPriority(settings: Settings): Responder.Priority =
         if (!ytDlpWrapper.available()) Responder.Priority.DISABLED
-        else Responder.Priority.MEDIUM
+        else Responder.Priority.LOW
 
     override fun canHandle(posting: Posting): Boolean {
         val extra = posting.extra

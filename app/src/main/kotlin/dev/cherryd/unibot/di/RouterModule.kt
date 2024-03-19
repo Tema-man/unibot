@@ -33,6 +33,7 @@ object RouterModule {
     )
 
     fun provideRouter() = Router(
-        responders = responders + helpCommandResponder
+        responders = responders + helpCommandResponder,
+        meter = MicrometerModule.meterRegistry
     )
 }

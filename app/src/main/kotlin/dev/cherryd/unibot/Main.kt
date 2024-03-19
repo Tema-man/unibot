@@ -21,7 +21,7 @@ fun main() {
     val unibot = Unibot(
         relays = RelaysModule.provideRelays(),
         router = RouterModule.provideRouter(),
-        meterRegistry = MicrometerModule.meterRegistry
+        meter = MicrometerModule.meterRegistry
     ).apply {
         start()
     }

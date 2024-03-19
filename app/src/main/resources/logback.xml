@@ -9,7 +9,7 @@
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_DIR}/%d{yyyy, aux}/%d{MM, aux}/%d{dd-MM}.zip</fileNamePattern>
+            <fileNamePattern>${LOG_DIR}/%d{yyyy, aux}/%d{MM, aux}/%d{yyyy-MM-dd}.zip</fileNamePattern>
             <maxHistory>360</maxHistory>
             <totalSizeCap>5GB</totalSizeCap>
         </rollingPolicy>
@@ -19,7 +19,7 @@
         </encoder>
     </appender>
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
     </root>
