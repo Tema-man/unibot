@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.flow
 
 class JoinChatResponder : Responder {
     override fun getPriority(settings: Settings) = Responder.Priority.HIGH
-    override fun canHandle(posting: Posting): Boolean = posting.extra is Posting.Content.Extra.ChatEvent.BotAdded
+    override fun canHandle(posting: Posting): Boolean =
+        posting.extra is Posting.Content.Extra.ChatEvent.BotAdded
 
     override fun responseStream(incoming: Posting): Flow<Posting> = flow {
-        val extra = incoming.extra
-        if (extra !is Posting.Content.Extra.ChatEvent.BotAdded) return@flow
+        if (!canHandle(incoming)) return@flow
     }
 }
