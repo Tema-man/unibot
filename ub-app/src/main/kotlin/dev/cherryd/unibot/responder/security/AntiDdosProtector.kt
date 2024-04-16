@@ -21,8 +21,7 @@ class AntiDdosProtector(
         posting.extra is Posting.Content.Extra.Command && posting.isUserBlocked
 
     override fun responseStream(incoming: Posting): Flow<Posting> {
-        if (incoming.extra !is Posting.Content.Extra.Command) return emptyFlow()
-        if (!incoming.isUserBlocked) return emptyFlow()
+        if (!canHandle(incoming)) return emptyFlow()
         return flowOf(dictionary.phraseAnswer(Phrase.STOP_DDOS, incoming))
     }
 

@@ -15,13 +15,12 @@ class HuificatorResponder : Responder {
 
     override fun getPriority(settings: Settings) = Responder.Priority.MEDIUM
 
-    override fun canHandle(posting: Posting): Boolean = shouldHuificate(posting)
+    override fun canHandle(posting: Posting): Boolean = shouldHuify(posting)
 
     override fun responseStream(incoming: Posting): Flow<Posting> {
-        if (!shouldHuificate(incoming)) return emptyFlow()
-
-        val huified = huify(incoming.extra.text)
+        if (!canHandle(incoming)) return emptyFlow()
         return flow {
+            val huified = huify(incoming.extra.text)
             emit(incoming.textAnswer { huified })
         }
     }
@@ -38,7 +37,7 @@ class HuificatorResponder : Responder {
 
     private fun getLastWord(text: String) = text.split(regex = spaces).last()
 
-    private fun shouldHuificate(posting: Posting): Boolean {
+    private fun shouldHuify(posting: Posting): Boolean {
         if (posting.extra.text.isBlank()) return false
 
         val wordLowerCase = getLastWord(posting.extra.text).lowercase()
