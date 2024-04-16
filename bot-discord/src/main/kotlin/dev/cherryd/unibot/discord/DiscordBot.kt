@@ -33,6 +33,7 @@ class DiscordBot(
 
     private val botSettings = Settings.Bot(
         name = environment.get(DISCORD_BOT_NAME),
+        aliases = environment.getBotNameAliases(),
         token = environment.get(DISCORD_BOT_TOKEN),
         commandPrefix = "!"
     )
