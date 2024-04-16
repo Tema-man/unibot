@@ -6,7 +6,7 @@ import dev.cherryd.unibot.core.Settings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
-class KeyWordResponder : Responder {
+class BotMentionResponder : Responder {
 
     override fun getPriority(settings: Settings) = Responder.Priority.LOW
 
