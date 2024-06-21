@@ -24,12 +24,12 @@ class BotMentionResponder(
 
     private fun isBotMention(posting: Posting): Boolean {
         val botName = posting.settings.bot.name
-        return posting.extra.text.contains("@$botName", ignoreCase = true)
+        return posting.extra.text.contains(botName, ignoreCase = true)
     }
 
     private fun isBotAliasMention(posting: Posting): Boolean {
         val botAliases = posting.settings.bot.aliases
-        return botAliases.any { posting.extra.text.contains("@$it", ignoreCase = true) }
+        return botAliases.any { posting.extra.text.contains(it, ignoreCase = true) }
     }
 
     private fun isReplyToBot(posting: Posting): Boolean =

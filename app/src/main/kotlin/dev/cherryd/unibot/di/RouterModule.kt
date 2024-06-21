@@ -7,6 +7,7 @@ import dev.cherryd.unibot.responder.quote.QuoteResponder
 import dev.cherryd.unibot.responder.quote.TopHistoryResponder
 import dev.cherryd.unibot.responder.security.AntiDdosProtector
 import dev.cherryd.unibot.responder.security.UserCommandHistory
+import dev.cherryd.unibot.responder.talking.BotMentionResponder
 import dev.cherryd.unibot.responder.talking.HuificatorResponder
 import dev.cherryd.unibot.responder.tiktok.TikTokVideoDownloader
 
@@ -24,7 +25,8 @@ object RouterModule {
         QuoteResponder(RepositoriesModule.quoteRepository),
         JoinChatResponder(),
         TopHistoryResponder(RepositoriesModule.quoteRepository),
-        HuificatorResponder()
+        HuificatorResponder(),
+        BotMentionResponder(RepositoriesModule.quoteRepository)
     )
 
     private val helpCommandResponder = HelpCommandResponder(
