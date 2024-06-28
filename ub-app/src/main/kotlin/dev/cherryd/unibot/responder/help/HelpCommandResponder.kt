@@ -12,13 +12,13 @@ class HelpCommandResponder(
 
     override val commandDescription = CommandDescription(
         command = "help",
-        description = "Shows help",
+        description = "Показывает помощь",
         arguments = listOf(
-            CommandDescription.Argument("command_name", "Shows help for specific command"),
+            CommandDescription.Argument("имя_команды", "Показывает помощь для указаной команды")
         ),
         examples = listOf(
-            "help # Prints this message",
-            "help quote # Prints help for 'quote' command"
+            "help # Показывает список всех команд",
+            "help quote # Показывает помощь для команды 'quote'"
         )
     )
 

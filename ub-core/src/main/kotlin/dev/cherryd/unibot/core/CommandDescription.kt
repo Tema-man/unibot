@@ -20,10 +20,10 @@ data class CommandDescription(
         """
 $prefix$command [${arguments.joinToString(", ") { "<${it.name}>" }}]
 
-Arguments:
+Аргументы:
 ${arguments.joinToString("\n") { " - ${it.describe()}" }}
 
-Examples:
+Примеры:
 ${examples.joinToString(separator = "\n") { " - $it" }}
 """.trimIndent()
 }
