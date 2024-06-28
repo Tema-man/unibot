@@ -32,6 +32,8 @@ class BotMentionResponder(
         return botAliases.any { posting.extra.text.contains(it, ignoreCase = true) }
     }
 
-    private fun isReplyToBot(posting: Posting): Boolean =
-        posting.content.reply?.sender?.name == posting.settings.bot.name
+    private fun isReplyToBot(posting: Posting): Boolean = with(posting) {
+        content.reply?.sender?.id == settings.bot.id ||
+                content.reply?.sender?.name == settings.bot.name
+    }
 }

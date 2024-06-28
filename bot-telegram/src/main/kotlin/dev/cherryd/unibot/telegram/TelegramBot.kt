@@ -35,6 +35,7 @@ internal class TelegramBot(
     )
 
     private val botSettings = Settings.Bot(
+        id = environment.get(TELEGRAM_BOT_ID),
         name = environment.get(TELEGRAM_BOT_NAME),
         aliases = environment.getBotNameAliases(),
         token = environment.get(TELEGRAM_API_KEY),
@@ -80,6 +81,7 @@ internal class TelegramBot(
 
     private companion object {
         const val TELEGRAM_API_KEY = "TELEGRAM_API_KEY"
+        const val TELEGRAM_BOT_ID = "TELEGRAM_BOT_ID"
         const val TELEGRAM_BOT_NAME = "TELEGRAM_BOT_NAME"
         const val TELEGRAM_DEVELOPER_NAME = "TELEGRAM_DEVELOPER_NAME"
     }

@@ -32,6 +32,7 @@ class DiscordBot(
     private val postingScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private val botSettings = Settings.Bot(
+        id = environment.get(DISCORD_BOT_ID),
         name = environment.get(DISCORD_BOT_NAME),
         aliases = environment.getBotNameAliases(),
         token = environment.get(DISCORD_BOT_TOKEN),
@@ -101,6 +102,7 @@ class DiscordBot(
 
     private companion object {
         const val DISCORD_DEVELOPER_NAME = "DISCORD_DEVELOPER_NAME"
+        const val DISCORD_BOT_ID = "DISCORD_BOT_ID"
         const val DISCORD_BOT_NAME = "DISCORD_BOT_NAME"
         const val DISCORD_BOT_TOKEN = "DISCORD_BOT_TOKEN"
     }
