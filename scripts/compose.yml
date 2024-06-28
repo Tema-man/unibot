@@ -20,7 +20,41 @@ services:
     volumes:
       - ./logs:/var/log/unibot
 
+  unibot-db:
+    networks:
+      unibot-net:
+    image: postgres:16
+    container_name: unibot-db
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  unibot-pgadmin:
+    container_name: family-pgadmin
+    image: dpage/pgadmin4
+    networks:
+      unibot-net:
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL
+      - PGADMIN_DEFAULT_PASSWORD
+    restart: always
+    ports:
+      - "127.0.0.1:5081:80"
+
 networks:
   unibot-net:
     name: "unibot-net"
     driver: bridge
+
+volumes:
+  postgres-data:
+  pgadmin-data:

@@ -39,6 +39,9 @@ ktor-cio = { module = "io.ktor:ktor-server-cio-jvm", version.ref = "ktor" }
 ktor-tests = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "ktor" }
 micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version = "1.12.4" }
 
+hikaricp = { module = 'com.zaxxer:HikariCP', version = '5.0.1' }
+postgresql-driver = { module = 'org.postgresql:postgresql', version = '42.6.0' }
+
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

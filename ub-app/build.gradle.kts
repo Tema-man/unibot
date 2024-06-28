@@ -8,6 +8,8 @@ dependencies {
     implementation(libs.kotlin.serialisation.bom)
     implementation(libs.kotlin.serialisation.json)
     implementation(libs.tomlj)
+    implementation(libs.hikaricp)
+    implementation(libs.postgresql.driver)
 
     implementation(project(":ub-core"))
 }

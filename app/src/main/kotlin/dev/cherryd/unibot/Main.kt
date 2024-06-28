@@ -2,6 +2,7 @@ package dev.cherryd.unibot
 
 import dev.cherryd.unibot.di.MicrometerModule
 import dev.cherryd.unibot.di.RelaysModule
+import dev.cherryd.unibot.di.RepositoriesModule
 import dev.cherryd.unibot.di.RouterModule
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.*
@@ -21,7 +22,8 @@ fun main() {
     val unibot = Unibot(
         relays = RelaysModule.provideRelays(),
         router = RouterModule.provideRouter(),
-        meter = MicrometerModule.meterRegistry
+        meter = MicrometerModule.meterRegistry,
+        chatsRepository = RepositoriesModule.chatsRepository
     ).apply {
         start()
     }

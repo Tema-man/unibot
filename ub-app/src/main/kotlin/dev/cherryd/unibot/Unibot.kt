@@ -2,6 +2,7 @@ package dev.cherryd.unibot
 
 import dev.cherryd.unibot.core.Posting
 import dev.cherryd.unibot.core.Relay
+import dev.cherryd.unibot.data.ChatsRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.*
@@ -13,7 +14,8 @@ import java.util.concurrent.TimeUnit
 class Unibot(
     relays: List<Relay>,
     private val router: Router,
-    private val meter: MeterRegistry
+    private val meter: MeterRegistry,
+    private val chatsRepository: ChatsRepository
 ) {
 
     private val log = KotlinLogging.logger("Unibot")
@@ -70,6 +72,9 @@ class Unibot(
 
     private fun handle(incoming: Posting): Flow<Posting> {
         val responder = router.pickResponder(incoming) ?: return emptyFlow()
+        relayScope.launch {
+            chatsRepository.saveChat(incoming.content.chat)
+        }
 
         val startTime = System.currentTimeMillis()
         val respondTimer = meter.timer("unibot.response", "responder", responder.javaClass.name)

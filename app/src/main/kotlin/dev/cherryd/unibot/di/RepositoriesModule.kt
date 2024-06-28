@@ -2,6 +2,7 @@ package dev.cherryd.unibot.di
 
 import dev.cherryd.unibot.core.CommandResponder
 import dev.cherryd.unibot.core.CommandsRepository
+import dev.cherryd.unibot.data.ChatsRepository
 import dev.cherryd.unibot.responder.help.CommandsRepositoryImpl
 import dev.cherryd.unibot.responder.quote.QuoteRepository
 
@@ -11,4 +12,5 @@ object RepositoriesModule {
 
     val commandsRepository: CommandsRepository by lazy { CommandsRepositoryImpl(RouterModule.responders.filterIsInstance<CommandResponder>()) }
 
+    val chatsRepository: ChatsRepository by lazy { ChatsRepository(AppModule.database) }
 }
