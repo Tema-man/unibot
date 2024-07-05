@@ -3,6 +3,8 @@ package dev.cherryd.unibot.data
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import dev.cherryd.unibot.core.Environment
+import java.sql.Connection
+import java.sql.PreparedStatement
 import java.sql.SQLException
 
 
@@ -26,7 +28,15 @@ class Database(
     }
 
     @Throws(SQLException::class)
-    fun getConnection() = dataSource.connection
+    fun getConnection(): Connection = dataSource.connection
+
+    fun <T> execute(sql: String, block: PreparedStatement.() -> T): T? {
+        dataSource.connection.use { connection ->
+            connection.prepareStatement(sql).use { statement ->
+                return block(statement)
+            }
+        }
+    }
 
     companion object {
         private const val DATABASE_HOST = "DATABASE_HOST"

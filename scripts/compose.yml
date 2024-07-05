@@ -37,7 +37,7 @@ services:
       - "127.0.0.1:5432:5432"
 
   unibot-pgadmin:
-    container_name: family-pgadmin
+    container_name: unibot-pgadmin
     image: dpage/pgadmin4
     networks:
       unibot-net:

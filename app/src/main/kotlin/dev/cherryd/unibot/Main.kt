@@ -23,7 +23,9 @@ fun main() {
         relays = RelaysModule.provideRelays(),
         router = RouterModule.provideRouter(),
         meter = MicrometerModule.meterRegistry,
-        chatsRepository = RepositoriesModule.chatsRepository
+        chatsRepository = RepositoriesModule.chatsRepository,
+        messagesRepository = RepositoriesModule.messagesRepository,
+        usersRepository = RepositoriesModule.usersRepository
     ).apply {
         start()
     }

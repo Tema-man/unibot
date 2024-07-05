@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS users
 (
     id       VARCHAR(128) NOT NULL,
     name     VARCHAR(1000),
-    username VARCHAR(1000),
     role     VARCHAR(100) NOT NULL DEFAULT 'user',
     CONSTRAINT users_pkey
         PRIMARY KEY (id)
