@@ -9,6 +9,7 @@ import dev.cherryd.unibot.responder.security.AntiDdosProtector
 import dev.cherryd.unibot.responder.security.UserCommandHistory
 import dev.cherryd.unibot.responder.talking.BotMentionResponder
 import dev.cherryd.unibot.responder.talking.HuificatorResponder
+import dev.cherryd.unibot.responder.talking.RandomMessageResponder
 import dev.cherryd.unibot.responder.tiktok.TikTokVideoDownloader
 
 object RouterModule {
@@ -26,7 +27,8 @@ object RouterModule {
         JoinChatResponder(),
         TopHistoryResponder(RepositoriesModule.quoteRepository),
         HuificatorResponder(),
-        BotMentionResponder(RepositoriesModule.quoteRepository)
+        BotMentionResponder(RepositoriesModule.quoteRepository, RepositoriesModule.messagesRepository),
+        RandomMessageResponder(RepositoriesModule.messagesRepository)
     )
 
     private val helpCommandResponder = HelpCommandResponder(

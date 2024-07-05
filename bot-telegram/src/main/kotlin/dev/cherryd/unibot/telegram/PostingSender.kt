@@ -48,8 +48,10 @@ class PostingSender(
     private suspend fun sendText(posting: Posting, text: String) {
         tgSender.sendInternal(
             chatId = posting.content.chat.id,
+            messageId = posting.content.id.toIntOrNull(),
             text = text,
-            shouldTypeBeforeSend = false
+            shouldTypeBeforeSend = text.length > 10,
+            replyToUpdate = posting.content.reply != null
         )
     }
 
@@ -57,7 +59,6 @@ class PostingSender(
         chatId: String,
         messageId: Int? = null,
         text: String,
-        replyMessageId: Int? = null,
         enableHtml: Boolean = false,
         replyToUpdate: Boolean = false,
         customization: SendMessage.() -> Unit = { },
@@ -72,7 +73,6 @@ class PostingSender(
 
         val method = SendMessage(chatId, text).apply {
             enableHtml(enableHtml)
-            if (replyMessageId != null) replyToMessageId = replyMessageId
             if (replyToUpdate) replyToMessageId = messageId
             customization()
         }

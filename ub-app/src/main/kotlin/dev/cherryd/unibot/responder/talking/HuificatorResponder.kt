@@ -3,6 +3,7 @@ package dev.cherryd.unibot.responder.talking
 import dev.cherryd.unibot.core.Posting
 import dev.cherryd.unibot.core.Responder
 import dev.cherryd.unibot.core.Settings
+import dev.cherryd.unibot.random.RandomThreshold
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
@@ -10,8 +11,7 @@ import java.util.concurrent.ThreadLocalRandom
 
 class HuificatorResponder : Responder {
 
-    @Volatile
-    private var nextProbability: Float = 0.2f
+    private val randomThreshold = RandomThreshold()
 
     override fun getPriority(settings: Settings) = Responder.Priority.MEDIUM
 
@@ -47,16 +47,7 @@ class HuificatorResponder : Responder {
         if (onlyDashes.matches(wordLowerCase)) return false
         if (wordLowerCase.startsWith("ху", true)) return false
 
-        return checkRandom()
-    }
-
-    @Synchronized
-    private fun checkRandom(): Boolean {
-        val random = ThreadLocalRandom.current()
-        nextProbability += random.nextFloat(0f, 0.01f)
-        if (nextProbability > 0.9f) nextProbability = 0.2f
-
-        return random.nextFloat(0f, 1f) <= nextProbability
+        return randomThreshold.checkRandom()
     }
 
     private fun String?.dropLastDelimiter(): String? {

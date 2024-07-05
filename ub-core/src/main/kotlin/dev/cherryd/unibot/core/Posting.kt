@@ -9,9 +9,20 @@ data class Posting(
 
     val extra: Content.Extra get() = content.extra
 
-    fun answer(extra: Content.Extra) = copy(content = content.copy(extra = extra))
+    fun answer(
+        extra: Content.Extra,
+        reply: Boolean = false
+    ) = copy(
+        content = content.copy(
+            extra = extra,
+            reply = content.takeIf { reply }
+        ),
+    )
 
-    inline fun textAnswer(text: () -> String) = answer(Posting.Content.Extra.Text(text()))
+    inline fun textAnswer(
+        reply: Boolean = false,
+        text: () -> String
+    ) = answer(Content.Extra.Text(text()), reply)
 
     data class Content(
         val id: String,

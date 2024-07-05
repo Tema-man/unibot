@@ -7,6 +7,9 @@ class MessagesRepository(
 ) {
 
     fun savePosting(posting: Posting) {
+        if (posting.content.extra !is Posting.Content.Extra.Text) return
+        if (posting.content.extra.text.length !in (5..50)) return
+
         database.execute(
             """
                 INSERT INTO messages (chat_id, user_id, message) VALUES (?, ?, ?) 
