@@ -7,8 +7,8 @@ interface Relay {
     /**
      * Basically a stream of messages from a particular bot.
      */
-    fun incomingPostingsFlow(): Flow<Posting>
-    suspend fun post(posting: Posting)
+    fun incomingPostingsFlow(): Flow<Post>
+    suspend fun post(post: Post)
 
     suspend fun start()
     suspend fun afterStartSetup()

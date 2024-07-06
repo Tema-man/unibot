@@ -1,7 +1,7 @@
 package dev.cherryd.unibot.telegram
 
 import dev.cherryd.unibot.core.Environment
-import dev.cherryd.unibot.core.Posting
+import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Settings
 import dev.cherryd.unibot.telegram.parser.CommandExtraParser
 import dev.cherryd.unibot.telegram.parser.StickerExtraParser
@@ -24,7 +24,7 @@ internal class TelegramBot(
     private val tgBotApi = TelegramBotsApi(DefaultBotSession::class.java)
     private var session: BotSession? = null
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    private val postingsFlow = MutableSharedFlow<Posting>()
+    private val postingsFlow = MutableSharedFlow<Post>()
 
     private val postingMediaMapper = PostingMediaMapper(
         parsers = listOf(
@@ -39,6 +39,7 @@ internal class TelegramBot(
         name = environment.get(TELEGRAM_BOT_NAME),
         aliases = environment.getBotNameAliases(),
         token = environment.get(TELEGRAM_API_KEY),
+        developerName = environment.get(TELEGRAM_DEVELOPER_NAME),
         commandPrefix = "/"
     )
 
@@ -61,23 +62,13 @@ internal class TelegramBot(
         if (update == null) return
         coroutineScope.launch {
             logger.info { "Received Telegram Update: ${update.message.text}" }
-
-            val settings = Settings(
-                developerName = environment.get(TELEGRAM_DEVELOPER_NAME),
-                bot = botSettings
-            )
-            val media = postingMediaMapper.map(update, settings)
-
-            val posting = Posting(
-                settings = settings,
-                content = media
-            )
-
-            postingsFlow.emit(posting)
+            val settings = Settings(bot = botSettings)
+            val post = postingMediaMapper.map(update, settings)
+            postingsFlow.emit(post)
         }
     }
 
-    fun observePostings(): Flow<Posting> = postingsFlow
+    fun observePostings(): Flow<Post> = postingsFlow
 
     private companion object {
         const val TELEGRAM_API_KEY = "TELEGRAM_API_KEY"

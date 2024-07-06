@@ -1,6 +1,6 @@
 package dev.cherryd.unibot
 
-import dev.cherryd.unibot.core.Posting
+import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Relay
 import dev.cherryd.unibot.data.ChatsRepository
 import dev.cherryd.unibot.data.MessagesRepository
@@ -13,6 +13,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.TimeUnit
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class Unibot(
     relays: List<Relay>,
     private val router: Router,
@@ -26,8 +27,6 @@ class Unibot(
     private val relayScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     private val mutex = Mutex()
     private val workingRelays = relays.toMutableList()
-
-    fun isRunning() = relayScope.isActive
 
     fun start() = meter.timeOf("unibot.startup") {
         log.info { "Starting relays" }
@@ -48,7 +47,6 @@ class Unibot(
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun startRelay(relay: Relay) {
         val postingsFlow = relay.incomingPostingsFlow()
             .flatMapMerge { posting -> handle(posting) }
@@ -74,12 +72,12 @@ class Unibot(
         }
     }
 
-    private fun handle(incoming: Posting): Flow<Posting> {
-        storePosting(incoming)
-        val responder = router.pickResponder(incoming) ?: return emptyFlow()
+    private fun handle(post: Post): Flow<Post> {
+        storePosting(post)
+        val responder = router.pickResponder(post) ?: return emptyFlow()
         val startTime = System.currentTimeMillis()
         val respondTimer = meter.timer("unibot.response", "responder", responder.javaClass.name)
-        return responder.responseStream(incoming)
+        return responder.responseStream(post)
             .onEach { posting ->
                 log.info { "Responding with: $posting" }
             }
@@ -88,12 +86,12 @@ class Unibot(
             }
     }
 
-    private fun storePosting(posting: Posting) {
+    private fun storePosting(post: Post) {
         relayScope.launch {
             meter.timeOf("unibot.store.posting") {
-                usersRepository.saveUser(posting.content.sender)
-                chatsRepository.saveChat(posting.content.chat)
-                messagesRepository.savePosting(posting)
+                usersRepository.saveUser(post.sender)
+                chatsRepository.saveChat(post.chat)
+                messagesRepository.savePosting(post)
             }
         }
     }

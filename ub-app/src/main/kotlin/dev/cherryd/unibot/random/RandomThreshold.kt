@@ -6,16 +6,20 @@ class RandomThreshold(
     private val startProbability: Float = 0.2f,
     private val increaseSpeed: Float = 0.01f
 ) {
-
     @Volatile
     private var nextProbability: Float = startProbability
+    private val random = ThreadLocalRandom.current()
 
     @Synchronized
-    fun checkRandom(): Boolean {
-        val random = ThreadLocalRandom.current()
+    fun isHit(): Boolean {
         nextProbability += random.nextFloat(0f, increaseSpeed)
-        if (nextProbability > 0.9f) nextProbability = startProbability
+        val hit = random.nextFloat(0f, 1f) <= nextProbability
+        if (hit || nextProbability > 0.9f) reset()
+        return hit
+    }
 
-        return random.nextFloat(0f, 1f) <= nextProbability
+    @Synchronized
+    fun reset() {
+        nextProbability = startProbability
     }
 }

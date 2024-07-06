@@ -20,6 +20,8 @@ class Database(
             jdbcUrl = "jdbc:postgresql://${environment.get(DATABASE_HOST)}/$dbName"
             username = environment.get(DATABASE_USER)
             password = environment.get(DATABASE_PASSWORD)
+            maximumPoolSize = 3
+            poolName = "HikariPool-PostgreSQL"
             addDataSourceProperty("cachePrepStmts", "true")
             addDataSourceProperty("prepStmtCacheSize", "250")
             addDataSourceProperty("prepStmtCacheSqlLimit", "2048")

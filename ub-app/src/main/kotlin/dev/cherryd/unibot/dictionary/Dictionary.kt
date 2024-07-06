@@ -1,6 +1,6 @@
 package dev.cherryd.unibot.dictionary
 
-import dev.cherryd.unibot.core.Posting
+import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Settings
 import io.github.oshai.kotlinlogging.KotlinLogging
 
@@ -21,7 +21,7 @@ class Dictionary(
         checkDefaults()
     }
 
-    fun phraseAnswer(phrase: Phrase, posting: Posting) = posting.textAnswer { getPhrase(phrase, posting.settings) }
+    fun phraseAnswer(phrase: Phrase, post: Post) = post.textAnswer { getPhrase(phrase, post.settings) }
 
     fun getPhrase(phrase: Phrase, settings: Settings): String {
         val theme = selectTheme(settings)
@@ -33,12 +33,13 @@ class Dictionary(
         return getPhrase(phrase, theme).format(*args)
     }
 
-    private fun selectTheme(settings: Settings): Theme = Theme.DEFAULT
-
     private fun getPhrase(phrase: Phrase, theme: Theme): String {
         val phrasesByTheme = getDictionaryForTheme(theme)
-        return phrasesByTheme[phrase]?.random() ?: getDefaultPhrase(phrase).random().also { logger.warn { "Phrase $phrase in $theme is missing" } }
+        return phrasesByTheme[phrase]?.random()
+            ?: getDefaultPhrase(phrase).random().also { logger.warn { "Phrase $phrase in $theme is missing" } }
     }
+
+    private fun selectTheme(settings: Settings): Theme = Theme.DEFAULT
 
     private fun getDictionaryForTheme(theme: Theme): Map<Phrase, List<String>> =
         dictionary[theme] ?: throw IllegalStateException("Theme $theme is missing")

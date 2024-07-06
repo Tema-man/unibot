@@ -1,6 +1,6 @@
 package dev.cherryd.unibot.telegram
 
-import dev.cherryd.unibot.core.Posting
+import dev.cherryd.unibot.core.Post
 import kotlinx.coroutines.delay
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -15,24 +15,24 @@ class PostingSender(
     private val tgSender: AbsSender
 ) {
 
-    suspend fun send(posting: Posting) {
-        when (val extra = posting.extra) {
-            is Posting.Content.Extra.Video -> sendVideo(posting, extra.file)
-            is Posting.Content.Extra.ChatEvent.SendingVideo -> {
-                tgSender.execute(SendChatAction(posting.content.chat.id, "upload_video", null))
+    suspend fun send(post: Post) {
+        when (val extra = post.extra) {
+            is Post.Extra.Video -> sendVideo(post, extra.file)
+            is Post.Extra.ChatEvent.SendingVideo -> {
+                tgSender.execute(SendChatAction(post.chat.id, "upload_video", null))
             }
 
-            else -> if (extra.text.isNotBlank()) sendText(posting, extra.text)
+            else -> if (extra.text.isNotBlank()) sendText(post, extra.text)
         }
     }
 
-    private fun sendVideo(posting: Posting, file: File) {
+    private fun sendVideo(post: Post, file: File) {
         val video = SendVideo
             .builder()
             .video(InputFile(file))
-            .chatId(posting.content.chat.id)
+            .chatId(post.chat.id)
             .also {
-                runCatching { posting.content.id.toInt() }
+                runCatching { post.id.toInt() }
                     .getOrNull()
                     ?.let { id -> it.replyToMessageId(id) }
             }
@@ -45,13 +45,13 @@ class PostingSender(
         }
     }
 
-    private suspend fun sendText(posting: Posting, text: String) {
+    private suspend fun sendText(post: Post, text: String) {
         tgSender.sendInternal(
-            chatId = posting.content.chat.id,
-            messageId = posting.content.id.toIntOrNull(),
+            chatId = post.chat.id,
+            messageId = post.id.toIntOrNull(),
             text = text,
             shouldTypeBeforeSend = text.length > 10,
-            replyToUpdate = posting.content.reply != null
+            replyToUpdate = post.reply != null
         )
     }
 

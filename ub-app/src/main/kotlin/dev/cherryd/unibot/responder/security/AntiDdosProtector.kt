@@ -1,6 +1,6 @@
 package dev.cherryd.unibot.responder.security
 
-import dev.cherryd.unibot.core.Posting
+import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Responder
 import dev.cherryd.unibot.core.Responder.Priority
 import dev.cherryd.unibot.core.Settings
@@ -17,14 +17,14 @@ class AntiDdosProtector(
 
     override fun getPriority(settings: Settings) = Priority.HIGH
 
-    override fun canHandle(posting: Posting): Boolean =
-        posting.extra is Posting.Content.Extra.Command && posting.isUserBlocked
+    override fun canHandle(post: Post): Boolean =
+        post.extra is Post.Extra.Command && post.isUserBlocked
 
-    override fun responseStream(incoming: Posting): Flow<Posting> {
+    override fun responseStream(incoming: Post): Flow<Post> {
         if (!canHandle(incoming)) return emptyFlow()
         return flowOf(dictionary.phraseAnswer(Phrase.STOP_DDOS, incoming))
     }
 
-    private val Posting.isUserBlocked: Boolean
-        get() = userCommandHistory.checkUserCommandLimit(content.sender.id)
+    private val Post.isUserBlocked: Boolean
+        get() = userCommandHistory.checkUserCommandLimit(sender.id)
 }

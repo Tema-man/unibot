@@ -24,13 +24,13 @@ class HelpCommandResponder(
 
     override fun getPriority(settings: Settings) = Responder.Priority.HIGH
 
-    override suspend fun handleCommand(flow: FlowCollector<Posting>, incoming: Posting) {
-        val args = incoming.content.extra.text.split(" ")
+    override suspend fun handleCommand(flow: FlowCollector<Post>, post: Post) {
+        val args = post.extra.text.split(" ")
         val helpMessageText =
-            if (args.isEmpty() || args.size < 2) printCommonHelp(incoming.settings)
-            else printSpecificHelp(incoming.settings, args[1])
+            if (args.isEmpty() || args.size < 2) printCommonHelp(post.settings)
+            else printSpecificHelp(post.settings, args[1])
 
-        flow.emit(incoming.textAnswer { helpMessageText })
+        flow.emit(post.textAnswer { helpMessageText })
     }
 
     private fun printCommonHelp(settings: Settings): String {

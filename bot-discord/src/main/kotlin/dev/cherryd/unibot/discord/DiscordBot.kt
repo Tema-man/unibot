@@ -1,7 +1,7 @@
 package dev.cherryd.unibot.discord
 
 import dev.cherryd.unibot.core.Environment
-import dev.cherryd.unibot.core.Posting
+import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Settings
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
@@ -27,7 +27,7 @@ class DiscordBot(
 ) {
 
     private val logger = KotlinLogging.logger("DiscordBot")
-    private val postingsFlow = MutableSharedFlow<Posting>()
+    private val postingsFlow = MutableSharedFlow<Post>()
     private lateinit var kord: Kord
     private val postingScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -36,6 +36,7 @@ class DiscordBot(
         name = environment.get(DISCORD_BOT_NAME),
         aliases = environment.getBotNameAliases(),
         token = environment.get(DISCORD_BOT_TOKEN),
+        developerName = environment.get(DISCORD_DEVELOPER_NAME),
         commandPrefix = "!"
     )
 
@@ -62,22 +63,22 @@ class DiscordBot(
         kord.logout()
     }
 
-    fun observePostings(): Flow<Posting> = postingsFlow
+    fun observePostings(): Flow<Post> = postingsFlow
 
-    suspend fun post(posting: Posting) {
-        val snowflake = Snowflake(posting.content.chat.id)
+    suspend fun post(post: Post) {
+        val snowflake = Snowflake(post.chat.id)
 
         val request = UserMessageCreateBuilder().apply {
-            content = posting.content.extra.text
-            attachments = posting.content.extra.mapAttachments(snowflake)
+            content = post.extra.text
+            attachments = post.extra.mapAttachments(snowflake)
         }.toRequest()
 
         kord.rest.channel.createMessage(snowflake, request)
     }
 
-    private fun Posting.Content.Extra.mapAttachments(snowflake: Snowflake): MutableList<AttachmentBuilder> {
+    private fun Post.Extra.mapAttachments(snowflake: Snowflake): MutableList<AttachmentBuilder> {
         val attachment = when (this) {
-            is Posting.Content.Extra.Video -> AttachmentBuilder(snowflake).apply { filename = file.name }
+            is Post.Extra.Video -> AttachmentBuilder(snowflake).apply { filename = file.name }
 
             else -> null
         }
@@ -87,17 +88,10 @@ class DiscordBot(
     private suspend fun handleEvent(event: Event) {
         logger.info { "Received Discord event: $event" }
         val settings = Settings(
-            developerName = environment.get(DISCORD_DEVELOPER_NAME),
             bot = botSettings
         )
-        val content = postingMapper.map(event, settings)
-
-        val posting = Posting(
-            settings = settings,
-            content = content,
-        )
-
-        postingsFlow.emit(posting)
+        val post = postingMapper.map(event, settings)
+        postingsFlow.emit(post)
     }
 
     private companion object {

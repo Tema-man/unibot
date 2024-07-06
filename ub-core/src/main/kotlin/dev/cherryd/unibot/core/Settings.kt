@@ -1,7 +1,6 @@
 package dev.cherryd.unibot.core
 
 data class Settings(
-    val developerName: String,
     val bot: Bot
 ) {
     data class Bot(
@@ -9,6 +8,7 @@ data class Settings(
         val name: String,
         val aliases: List<String>,
         val token: String,
+        val developerName: String,
         val commandPrefix: String
     )
 }

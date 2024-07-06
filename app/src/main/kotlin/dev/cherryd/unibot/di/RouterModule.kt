@@ -24,7 +24,7 @@ object RouterModule {
         antiDdosProtector,
         TikTokVideoDownloader(AppModule.ytDlpWrapper),
         QuoteResponder(RepositoriesModule.quoteRepository),
-        JoinChatResponder(),
+        JoinChatResponder(AppModule.dictionary),
         TopHistoryResponder(RepositoriesModule.quoteRepository),
         HuificatorResponder(),
         BotMentionResponder(RepositoriesModule.quoteRepository, RepositoriesModule.messagesRepository),

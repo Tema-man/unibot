@@ -1,14 +1,14 @@
 package dev.cherryd.unibot.data
 
-import dev.cherryd.unibot.core.Posting
+import dev.cherryd.unibot.core.Post
 
 class MessagesRepository(
     private val database: Database
 ) {
 
-    fun savePosting(posting: Posting) {
-        if (posting.content.extra !is Posting.Content.Extra.Text) return
-        if (posting.content.extra.text.length !in (5..50)) return
+    fun savePosting(post: Post) {
+        if (post.extra !is Post.Extra.Text) return
+        if (post.extra.text.length !in (5..50)) return
 
         database.execute(
             """
@@ -16,9 +16,9 @@ class MessagesRepository(
                 ON CONFLICT(id) DO UPDATE SET message = excluded.message
             """.trimIndent()
         ) {
-            setString(1, posting.content.chat.id)
-            setString(2, posting.content.sender.id)
-            setString(3, posting.content.extra.text)
+            setString(1, post.chat.id)
+            setString(2, post.sender.id)
+            setString(3, post.extra.text)
             executeUpdate()
         }
     }

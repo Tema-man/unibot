@@ -2,7 +2,7 @@ package dev.cherryd.unibot.telegram
 
 import dev.cherryd.unibot.core.CommandsRepository
 import dev.cherryd.unibot.core.Environment
-import dev.cherryd.unibot.core.Posting
+import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Relay
 import kotlinx.coroutines.flow.Flow
 import org.telegram.telegrambots.meta.api.methods.commands.DeleteMyCommands
@@ -20,10 +20,10 @@ class TelegramRelay(
     private val tgBot = TelegramBot(environment)
     private val postingSender = PostingSender(tgBot)
 
-    override fun incomingPostingsFlow(): Flow<Posting> = tgBot.observePostings()
+    override fun incomingPostingsFlow(): Flow<Post> = tgBot.observePostings()
 
-    override suspend fun post(posting: Posting) {
-        postingSender.send(posting)
+    override suspend fun post(post: Post) {
+        postingSender.send(post)
     }
 
     override suspend fun afterStartSetup() {

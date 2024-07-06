@@ -2,7 +2,7 @@ package dev.cherryd.unibot.discord
 
 import dev.cherryd.unibot.core.CommandsRepository
 import dev.cherryd.unibot.core.Environment
-import dev.cherryd.unibot.core.Posting
+import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Relay
 import dev.cherryd.unibot.discord.parser.CommandExtraParser
 import kotlinx.coroutines.flow.Flow
@@ -19,10 +19,10 @@ class DiscordRelay(
         )
     )
 
-    override fun incomingPostingsFlow(): Flow<Posting> = discordBot.observePostings()
+    override fun incomingPostingsFlow(): Flow<Post> = discordBot.observePostings()
 
-    override suspend fun post(posting: Posting) {
-        discordBot.post(posting)
+    override suspend fun post(post: Post) {
+        discordBot.post(post)
     }
 
     override suspend fun start() {

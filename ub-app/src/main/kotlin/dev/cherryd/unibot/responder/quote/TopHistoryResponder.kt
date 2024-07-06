@@ -21,8 +21,8 @@ class TopHistoryResponder(
         )
     )
 
-    override suspend fun handleCommand(flow: FlowCollector<Posting>, incoming: Posting) {
-        val extra = (incoming.extra as? Posting.Content.Extra.Command) ?: return
+    override suspend fun handleCommand(flow: FlowCollector<Post>, incoming: Post) {
+        val extra = (incoming.extra as? Post.Extra.Command) ?: return
         val curse = repository.getCurses().random()
 
         val params = extra.text.split(" ")

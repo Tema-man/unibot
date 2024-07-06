@@ -22,13 +22,13 @@ class QuoteResponder(
 
     override fun getPriority(settings: Settings) = Responder.Priority.HIGH
 
-    override suspend fun handleCommand(flow: FlowCollector<Posting>, incoming: Posting) {
-        val message = when (val arg = incoming.content.extra.text.split(" ").getOrNull(1)) {
+    override suspend fun handleCommand(flow: FlowCollector<Post>, post: Post) {
+        val message = when (val arg = post.extra.text.split(" ").getOrNull(1)) {
             ARG_TAGS -> quoteRepository.getTags().joinToString(", ")
             null -> quoteRepository.getRandom()
             else -> quoteRepository.getByTag(arg) ?: "Цитаты по тегу '$arg' не найдено"
         }
-        flow.emit(incoming.textAnswer { message })
+        flow.emit(post.textAnswer { message })
     }
 
     companion object {

@@ -1,7 +1,7 @@
 package dev.cherryd.unibot.discord
 
 import dev.cherryd.unibot.core.Chat
-import dev.cherryd.unibot.core.Posting
+import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Settings
 import dev.cherryd.unibot.discord.eventconverter.EventConverter
 import dev.cherryd.unibot.discord.eventconverter.MessageCreateEventConverter
@@ -19,32 +19,37 @@ class PostingMapper(
         MessageCreateEvent::class to MessageCreateEventConverter(),
     )
 
-    fun map(event: Event, settings: Settings): Posting.Content {
+    fun map(event: Event, settings: Settings): Post {
         val converter = eventConverters[event::class]
             ?: throw IllegalArgumentException("Unsupported event type: $event")
 
         val chat = converter.toChat(event)
-        return Posting.Content(
+        return Post(
             id = converter.toMessageId(event),
             sender = converter.toUser(event),
             chat = chat,
             extra = event.parseExtra(),
-            reply = parseReply(converter.getReferencedMessage(event), chat)
+            reply = parseReply(converter.getReferencedMessage(event), chat, settings),
+            settings = settings
         )
     }
 
-    private fun Event.parseExtra() = parsers.firstNotNullOfOrNull { it.parse(this) }
-        ?: Posting.Content.Extra.Text("")
+    private fun Event.parseExtra() = parsers.firstNotNullOfOrNull { it.parse(this) } ?: Post.Extra.Text("")
 
-    private fun parseReply(referencedMessage: MessageData?, chat: Chat): Posting.Content? {
+    private fun parseReply(
+        referencedMessage: MessageData?,
+        chat: Chat,
+        settings: Settings
+    ): Post? {
         if (referencedMessage == null) return null
 
-        return Posting.Content(
+        return Post(
             id = referencedMessage.id.toString(),
             sender = referencedMessage.author.toUser(),
             chat = chat,
-            extra = Posting.Content.Extra.Text(referencedMessage.content),
-            reply = null
+            extra = Post.Extra.Text(referencedMessage.content),
+            reply = null,
+            settings = settings
         )
     }
 }
