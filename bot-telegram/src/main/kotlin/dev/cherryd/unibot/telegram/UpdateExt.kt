@@ -46,7 +46,6 @@ internal fun Update.toUser(settings: Settings): User {
 }
 
 internal fun TgUser.toUser(settings: Settings, isAdmin: Boolean = false): User {
-    val formattedName = listOfNotNull(firstName, lastName).joinToString(" ").trim()
     val role = when {
         settings.bot.developerName == userName -> User.Role.DEVELOPER
         isBot -> User.Role.BOT
@@ -56,7 +55,7 @@ internal fun TgUser.toUser(settings: Settings, isAdmin: Boolean = false): User {
     return User(
         id = id.toString(),
         role = role,
-        name = formattedName,
+        name = userName ?: "",
     )
 }
 

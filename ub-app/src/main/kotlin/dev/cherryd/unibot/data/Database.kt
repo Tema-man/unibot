@@ -3,9 +3,7 @@ package dev.cherryd.unibot.data
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import dev.cherryd.unibot.core.Environment
-import java.sql.Connection
 import java.sql.PreparedStatement
-import java.sql.SQLException
 
 
 class Database(
@@ -28,9 +26,6 @@ class Database(
         }
         dataSource = HikariDataSource(config)
     }
-
-    @Throws(SQLException::class)
-    fun getConnection(): Connection = dataSource.connection
 
     fun <T> execute(sql: String, block: PreparedStatement.() -> T): T? {
         dataSource.connection.use { connection ->

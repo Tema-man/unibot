@@ -52,7 +52,7 @@ class Unibot(
             .flatMapMerge { posting -> handle(posting) }
             .filterNotNull()
             .catch { cause ->
-                log.error { "Exception occurred in relay ${relay.javaClass.name}. Cause: $cause" }
+                log.error(cause) { "Exception occurred in relay ${relay.javaClass.name}. Cause: $cause" }
                 relay.restart()
             }
             .onStart { log.info { "${relay.javaClass.simpleName} subscribed to postings" } }
@@ -63,7 +63,7 @@ class Unibot(
             relay.afterStartSetup()
             postingsFlow.collect { posting -> relay.post(posting) }
         }.onFailure { cause ->
-            log.error { "Failed to start relay ${relay.javaClass.name}. Cause: $cause. Relay will be disabled." }
+            log.error(cause) { "Failed to start relay ${relay.javaClass.name}. Cause: $cause. Relay will be disabled." }
             relay.stop()
             mutex.withLock {
                 workingRelays.remove(relay)
@@ -91,6 +91,7 @@ class Unibot(
             meter.timeOf("unibot.store.posting") {
                 usersRepository.saveUser(post.sender)
                 chatsRepository.saveChat(post.chat)
+                usersRepository.linkUserToChat(post.sender, post.chat)
                 messagesRepository.savePosting(post)
             }
         }

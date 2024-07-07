@@ -3,6 +3,7 @@ package dev.cherryd.unibot.di
 import dev.cherryd.unibot.Router
 import dev.cherryd.unibot.responder.help.HelpCommandResponder
 import dev.cherryd.unibot.responder.joinchat.JoinChatResponder
+import dev.cherryd.unibot.responder.pidor.RandomPidorResponder
 import dev.cherryd.unibot.responder.quote.QuoteResponder
 import dev.cherryd.unibot.responder.quote.TopHistoryResponder
 import dev.cherryd.unibot.responder.security.AntiDdosProtector
@@ -28,7 +29,12 @@ object RouterModule {
         TopHistoryResponder(RepositoriesModule.quoteRepository),
         HuificatorResponder(),
         BotMentionResponder(RepositoriesModule.quoteRepository, RepositoriesModule.messagesRepository),
-        RandomMessageResponder(RepositoriesModule.messagesRepository)
+        RandomMessageResponder(RepositoriesModule.messagesRepository),
+        RandomPidorResponder(
+            pidorsRepository = RepositoriesModule.pidorsRepository,
+            usersRepository = RepositoriesModule.usersRepository,
+            dictionary = AppModule.dictionary,
+        ),
     )
 
     private val helpCommandResponder = HelpCommandResponder(

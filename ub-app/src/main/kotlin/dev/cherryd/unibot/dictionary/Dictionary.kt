@@ -23,6 +23,10 @@ class Dictionary(
 
     fun phraseAnswer(phrase: Phrase, post: Post) = post.textAnswer { getPhrase(phrase, post.settings) }
 
+    fun phraseAnswer(phrase: Phrase, post: Post, vararg args: String) = post.textAnswer {
+        getPhrase(phrase, post.settings, *args)
+    }
+
     fun getPhrase(phrase: Phrase, settings: Settings): String {
         val theme = selectTheme(settings)
         return getPhrase(phrase, theme)

@@ -18,6 +18,6 @@ abstract class CommandResponder : Responder {
         handleCommand(this, incoming)
     }
 
-    abstract suspend fun handleCommand(flow: FlowCollector<Post>, incoming: Post)
+    abstract suspend fun handleCommand(flow: FlowCollector<Post>, post: Post)
 
 }
