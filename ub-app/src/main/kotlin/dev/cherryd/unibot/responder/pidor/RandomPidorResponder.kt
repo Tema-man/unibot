@@ -2,7 +2,6 @@ package dev.cherryd.unibot.responder.pidor
 
 import dev.cherryd.unibot.core.*
 import dev.cherryd.unibot.data.PidorsRepository
-import dev.cherryd.unibot.data.UsersRepository
 import dev.cherryd.unibot.dictionary.Dictionary
 import dev.cherryd.unibot.dictionary.Phrase
 import kotlinx.coroutines.flow.FlowCollector

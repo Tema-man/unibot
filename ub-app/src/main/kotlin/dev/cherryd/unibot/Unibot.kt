@@ -2,9 +2,6 @@ package dev.cherryd.unibot
 
 import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Relay
-import dev.cherryd.unibot.data.ChatsRepository
-import dev.cherryd.unibot.data.MessagesRepository
-import dev.cherryd.unibot.data.UsersRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.*
@@ -18,9 +15,7 @@ class Unibot(
     relays: List<Relay>,
     private val router: Router,
     private val meter: MeterRegistry,
-    private val chatsRepository: ChatsRepository,
-    private val messagesRepository: MessagesRepository,
-    private val usersRepository: UsersRepository
+    private val chatService: ChatService
 ) {
 
     private val log = KotlinLogging.logger("Unibot")
@@ -73,7 +68,7 @@ class Unibot(
     }
 
     private fun handle(post: Post): Flow<Post> {
-        storePosting(post)
+        chatService.storePost(post)
         val responder = router.pickResponder(post) ?: return emptyFlow()
         val startTime = System.currentTimeMillis()
         val respondTimer = meter.timer("unibot.response", "responder", responder.javaClass.name)
@@ -84,16 +79,5 @@ class Unibot(
             .onCompletion {
                 respondTimer.record(System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS)
             }
-    }
-
-    private fun storePosting(post: Post) {
-        relayScope.launch {
-            meter.timeOf("unibot.store.posting") {
-                usersRepository.saveUser(post.sender)
-                chatsRepository.saveChat(post.chat)
-                usersRepository.linkUserToChat(post.sender, post.chat)
-                messagesRepository.savePosting(post)
-            }
-        }
     }
 }

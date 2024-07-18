@@ -87,10 +87,7 @@ class DiscordBot(
 
     private suspend fun handleEvent(event: Event) {
         logger.info { "Received Discord event: $event" }
-        val settings = Settings(
-            bot = botSettings
-        )
-        val post = postingMapper.map(event, settings)
+        val post = postingMapper.map(event, botSettings)
         postingsFlow.emit(post)
     }
 

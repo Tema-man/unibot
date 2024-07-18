@@ -3,6 +3,7 @@ package dev.cherryd.unibot.telegram
 import dev.cherryd.unibot.core.Environment
 import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Settings
+import dev.cherryd.unibot.core.SettingsRepository
 import dev.cherryd.unibot.telegram.parser.CommandExtraParser
 import dev.cherryd.unibot.telegram.parser.StickerExtraParser
 import dev.cherryd.unibot.telegram.parser.UrlsExtraParser
@@ -16,8 +17,9 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.generics.BotSession
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 
-internal class TelegramBot(
-    private val environment: Environment
+class TelegramBot(
+    environment: Environment,
+    private val settingsRepository: SettingsRepository
 ) : TelegramLongPollingBot(environment.get(TELEGRAM_API_KEY)) {
 
     private val logger = KotlinLogging.logger("TelegramBot")
@@ -62,7 +64,11 @@ internal class TelegramBot(
         if (update == null) return
         coroutineScope.launch {
             logger.info { "Received Telegram Update: ${update.message.text}" }
-            val settings = Settings(bot = botSettings)
+            val chat = update.getUniBotChat()
+            val settings = Settings(
+                bot = botSettings,
+                chat = settingsRepository.getChatSettings(chat)
+            )
             val post = postingMediaMapper.map(update, settings)
             postingsFlow.emit(post)
         }

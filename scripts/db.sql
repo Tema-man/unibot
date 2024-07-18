@@ -51,3 +51,17 @@ CREATE TABLE IF NOT EXISTS pidors
 );
 CREATE INDEX IF NOT EXISTS pidors_chat_id_idx ON pidors (chat_id);
 CREATE INDEX IF NOT EXISTS pidors_user_id_idx ON pidors (id);
+
+CREATE TABLE IF NOT EXISTS chat_settings
+(
+    chat_id     VARCHAR(128),
+    settings    JSON,
+    CONSTRAINT chat_settings_chat_id_fkey FOREIGN KEY (chat_id) REFERENCES chats
+);
+
+CREATE TABLE IF NOT EXISTS user_settings
+(
+    user_id     VARCHAR(128),
+    settings    JSON,
+    CONSTRAINT user_settings_user_id_fkey FOREIGN KEY (user_id) REFERENCES users
+);

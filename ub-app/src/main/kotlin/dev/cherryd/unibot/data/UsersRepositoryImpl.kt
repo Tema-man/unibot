@@ -2,15 +2,16 @@ package dev.cherryd.unibot.data
 
 import dev.cherryd.unibot.core.Chat
 import dev.cherryd.unibot.core.User
+import dev.cherryd.unibot.core.UsersRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 
-class UsersRepository(
+class UsersRepositoryImpl(
     private val database: Database
-) {
+): UsersRepository {
 
     private val logger = KotlinLogging.logger {}
 
-    fun saveUser(user: User) {
+    override fun saveUser(user: User) {
         logger.debug { "Saving user $user" }
         database.execute(
             """
@@ -21,12 +22,31 @@ class UsersRepository(
             setString(1, user.id)
             setString(2, user.name)
             setString(3, user.role.name.lowercase())
-            executeUpdate()
-            logger.debug { "User $user saved" }
+            val result = executeUpdate()
+            logger.debug { "User $user saved, result: $result" }
         }
     }
 
-    fun linkUserToChat(user: User, chat: Chat) {
+    override fun saveUsers(users: List<User>) {
+        logger.debug { "Saving users list $users" }
+        database.execute(
+            """
+                INSERT INTO users (id, name, role) VALUES (?, ?, ?) 
+                ON CONFLICT(id) DO UPDATE SET name = excluded.name, role = excluded.role
+            """.trimIndent()
+        ) {
+            users.forEachIndexed { index, user ->
+                setString(1, user.id)
+                setString(2, user.name)
+                setString(3, user.role.name.lowercase())
+                addBatch()
+            }
+            val result = executeBatch()
+            logger.debug { "Users list $users saved, result: $result" }
+        }
+    }
+
+    override fun linkUserToChat(user: User, chat: Chat) {
         logger.debug { "Linking user $user to chat $chat" }
         database.execute(
             """
@@ -36,12 +56,12 @@ class UsersRepository(
         ) {
             setString(1, user.id)
             setString(2, chat.id)
-            executeUpdate()
-            logger.debug { "User $user linked to chat $chat" }
+            val result = executeUpdate()
+            logger.debug { "User $user linked to chat $chat, result: $result" }
         }
     }
 
-    fun getUsersOfChat(chat: Chat, activeOnly: Boolean = false): List<User> {
+    override fun getUsersOfChat(chat: Chat, activeOnly: Boolean): List<User> {
         logger.debug { "Getting ${if (activeOnly) "active only " else ""}users of chat $chat" }
         return database.execute(
             """
@@ -63,7 +83,7 @@ class UsersRepository(
         }
     }
 
-    fun findUserByName(name: String): User? {
+    override fun findUserByName(name: String): User? {
         logger.debug { "Finding user by name $name" }
         return database.execute(
             """

@@ -14,10 +14,11 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 
 class TelegramRelay(
     environment: Environment,
-    private val commmandsRepository: CommandsRepository
+    private val commmandsRepository: CommandsRepository,
+    private val tgBot: TelegramBot
 ) : Relay {
 
-    private val tgBot = TelegramBot(environment)
+
     private val postingSender = PostingSender(tgBot)
 
     override fun incomingPostingsFlow(): Flow<Post> = tgBot.observePostings()

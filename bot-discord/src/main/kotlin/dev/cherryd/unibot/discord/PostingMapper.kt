@@ -3,6 +3,7 @@ package dev.cherryd.unibot.discord
 import dev.cherryd.unibot.core.Chat
 import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Settings
+import dev.cherryd.unibot.core.SettingsRepository
 import dev.cherryd.unibot.discord.eventconverter.EventConverter
 import dev.cherryd.unibot.discord.eventconverter.MessageCreateEventConverter
 import dev.cherryd.unibot.discord.parser.DiscordExtraParser
@@ -12,18 +13,23 @@ import dev.kord.core.event.message.MessageCreateEvent
 import kotlin.reflect.KClass
 
 class PostingMapper(
-    private val parsers: List<DiscordExtraParser>
+    private val parsers: List<DiscordExtraParser>,
+    private val settingsRepository: SettingsRepository
 ) {
 
     private val eventConverters = mapOf<KClass<*>, EventConverter>(
         MessageCreateEvent::class to MessageCreateEventConverter(),
     )
 
-    fun map(event: Event, settings: Settings): Post {
+    fun map(event: Event, botSettings: Settings.Bot): Post {
         val converter = eventConverters[event::class]
             ?: throw IllegalArgumentException("Unsupported event type: $event")
 
         val chat = converter.toChat(event)
+        val settings = Settings(
+            bot = botSettings,
+            chat = settingsRepository.getChatSettings(chat)
+        )
         return Post(
             id = converter.toMessageId(event),
             sender = converter.toUser(event),
