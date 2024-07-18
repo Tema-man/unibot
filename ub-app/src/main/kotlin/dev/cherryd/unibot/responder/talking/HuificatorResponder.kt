@@ -8,19 +8,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 
-class HuificatorResponder : Responder {
-
-    private val randomThreshold = RandomThreshold()
+class HuificatorResponder(
+    private val randomThreshold: RandomThreshold
+) : Responder {
 
     override fun getPriority(settings: Settings) = Responder.Priority.MEDIUM
 
     override fun canHandle(post: Post): Boolean = shouldHuify(post)
 
-    override fun responseStream(incoming: Post): Flow<Post> {
-        if (!canHandle(incoming)) return emptyFlow()
+    override fun responseStream(post: Post): Flow<Post> {
+        if (!canHandle(post)) return emptyFlow()
         return flow {
-            val huified = huify(incoming.extra.text)
-            emit(incoming.textAnswer { huified })
+            val huified = huify(post.extra.text)
+            emit(post.textAnswer { huified })
         }
     }
 
@@ -46,7 +46,7 @@ class HuificatorResponder : Responder {
         if (onlyDashes.matches(wordLowerCase)) return false
         if (wordLowerCase.startsWith("ху", true)) return false
 
-        return randomThreshold.isHit()
+        return randomThreshold.isHit(post.chat, post.settings.chat)
     }
 
     private fun String?.dropLastDelimiter(): String? {

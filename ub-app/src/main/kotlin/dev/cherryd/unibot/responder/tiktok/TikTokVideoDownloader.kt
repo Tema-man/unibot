@@ -22,16 +22,16 @@ class TikTokVideoDownloader(
         return extra.urls.any { it.canHandleUrl() }
     }
 
-    override fun responseStream(incoming: Post): Flow<Post> = flow {
-        val extra = (incoming.extra as? Post.Extra.Urls) ?: return@flow
+    override fun responseStream(post: Post): Flow<Post> = flow {
+        val extra = (post.extra as? Post.Extra.Urls) ?: return@flow
 
         val urls = extra.urls.filter { it.canHandleUrl() }
         if (urls.isEmpty()) return@flow
 
         val extras = urls.mapNotNull { url ->
-            emit(incoming.answer(Post.Extra.ChatEvent.SendingVideo))
+            emit(post.answer(Post.Extra.ChatEvent.SendingVideo))
             val downloadedFile = download(url) ?: return@mapNotNull null
-            emit(incoming.answer(Post.Extra.Video(downloadedFile)))
+            emit(post.answer(Post.Extra.Video(downloadedFile)))
         }
         if (extras.isEmpty()) return@flow
     }

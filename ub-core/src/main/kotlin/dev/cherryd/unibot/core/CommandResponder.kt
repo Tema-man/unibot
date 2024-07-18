@@ -13,9 +13,9 @@ abstract class CommandResponder : Responder {
         if (extra !is Post.Extra.Command) return false
         return extra.command == commandDescription.command
     }
-    override fun responseStream(incoming: Post): Flow<Post> = flow {
-        if (!canHandle(incoming)) return@flow
-        handleCommand(this, incoming)
+    override fun responseStream(post: Post): Flow<Post> = flow {
+        if (!canHandle(post)) return@flow
+        handleCommand(this, post)
     }
 
     abstract suspend fun handleCommand(flow: FlowCollector<Post>, post: Post)

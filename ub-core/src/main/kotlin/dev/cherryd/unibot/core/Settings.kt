@@ -22,10 +22,14 @@ data class Settings(
 
     @Serializable
     data class Chat(
-        val lastSyncDate: LocalDate?
+        val lastSyncDate: LocalDate?,
+        val randomThresholdProbability: Float
     ) {
         companion object {
-            val DEFAULT = Chat(lastSyncDate = null)
+            val DEFAULT = Chat(
+                lastSyncDate = null,
+                randomThresholdProbability = 0.2f
+            )
         }
     }
 }

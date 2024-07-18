@@ -37,12 +37,14 @@ class SettingsRepositoryImpl(
             """.trimIndent()
         ) {
             setString(1, chat.id)
-            val resultSet = executeQuery()
-            if (!resultSet.next()) return@execute null
+            runCatching {
+                val resultSet = executeQuery()
+                if (!resultSet.next()) return@execute null
 
-            val string = resultSet.getString("settings")
-            runCatching { Json.decodeFromString<Settings.Chat>(string) }
-                .onFailure { logger.error(it) { "Failed to parse chat settings: $string" } }
+                val string = resultSet.getString("settings")
+                Json.decodeFromString<Settings.Chat>(string)
+            }
+                .onFailure { logger.error(it) { "Failed to get chat settings" } }
                 .getOrNull()
 
         }

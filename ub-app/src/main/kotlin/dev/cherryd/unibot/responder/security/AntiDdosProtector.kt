@@ -20,9 +20,9 @@ class AntiDdosProtector(
     override fun canHandle(post: Post): Boolean =
         post.extra is Post.Extra.Command && post.isUserBlocked
 
-    override fun responseStream(incoming: Post): Flow<Post> {
-        if (!canHandle(incoming)) return emptyFlow()
-        return flowOf(dictionary.phraseAnswer(Phrase.STOP_DDOS, incoming))
+    override fun responseStream(post: Post): Flow<Post> {
+        if (!canHandle(post)) return emptyFlow()
+        return flowOf(dictionary.phraseAnswer(Phrase.STOP_DDOS, post))
     }
 
     private val Post.isUserBlocked: Boolean

@@ -1,6 +1,7 @@
 package dev.cherryd.unibot.di
 
 import dev.cherryd.unibot.Router
+import dev.cherryd.unibot.random.RandomThreshold
 import dev.cherryd.unibot.responder.help.HelpCommandResponder
 import dev.cherryd.unibot.responder.joinchat.JoinChatResponder
 import dev.cherryd.unibot.responder.pidor.RandomPidorResponder
@@ -15,6 +16,7 @@ import dev.cherryd.unibot.responder.tiktok.TikTokVideoDownloader
 
 object RouterModule {
 
+    private val randomThreshold = RandomThreshold(settingsRepository = RepositoriesModule.settingsRepository)
     private val userCommandHistory = UserCommandHistory()
     private val antiDdosProtector = AntiDdosProtector(
         dictionary = AppModule.dictionary,
@@ -27,9 +29,18 @@ object RouterModule {
         QuoteResponder(RepositoriesModule.quoteRepository),
         JoinChatResponder(AppModule.dictionary),
         TopHistoryResponder(RepositoriesModule.quoteRepository),
-        HuificatorResponder(),
-        BotMentionResponder(RepositoriesModule.quoteRepository, RepositoriesModule.messagesRepository),
-        RandomMessageResponder(RepositoriesModule.messagesRepository),
+        HuificatorResponder(
+            randomThreshold = randomThreshold
+        ),
+        BotMentionResponder(
+            quoteRepository = RepositoriesModule.quoteRepository,
+            messagesRepository = RepositoriesModule.messagesRepository,
+            randomThreshold = randomThreshold
+        ),
+        RandomMessageResponder(
+            messagesRepository = RepositoriesModule.messagesRepository,
+            randomThreshold = randomThreshold
+        ),
         RandomPidorResponder(
             pidorsRepository = RepositoriesModule.pidorsRepository,
             usersRepository = RepositoriesModule.usersRepository,

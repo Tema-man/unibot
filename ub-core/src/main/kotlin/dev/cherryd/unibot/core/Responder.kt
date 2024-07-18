@@ -6,7 +6,7 @@ interface Responder {
 
     fun getPriority(settings: Settings): Priority
     fun canHandle(post: Post): Boolean
-    fun responseStream(incoming: Post): Flow<Post>
+    fun responseStream(post: Post): Flow<Post>
 
     enum class Priority {
         DISABLED, LOW, MEDIUM, HIGH

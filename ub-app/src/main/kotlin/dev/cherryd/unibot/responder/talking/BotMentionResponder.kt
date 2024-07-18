@@ -11,24 +11,23 @@ import kotlinx.coroutines.flow.flow
 
 class BotMentionResponder(
     private val quoteRepository: QuoteRepository,
-    private val messagesRepository: MessagesRepository
+    private val messagesRepository: MessagesRepository,
+    private val randomThreshold: RandomThreshold
 ) : Responder {
-
-    private val randomThreshold = RandomThreshold(increaseSpeed = 0.2f)
 
     override fun getPriority(settings: Settings) = Responder.Priority.LOW
 
     override fun canHandle(post: Post): Boolean =
         isBotMention(post) || isBotAliasMention(post) || isReplyToBot(post)
 
-    override fun responseStream(incoming: Post): Flow<Post> = flow {
-        if (!canHandle(incoming)) return@flow
-        val answer = if (randomThreshold.isHit()) {
+    override fun responseStream(post: Post): Flow<Post> = flow {
+        if (!canHandle(post)) return@flow
+        val answer = if (randomThreshold.isHit(post.chat, post.settings.chat)) {
             quoteRepository.getRandom()
         } else {
             messagesRepository.getRandomPosting()
         }
-        emit(incoming.textAnswer(true) { answer })
+        emit(post.textAnswer(true) { answer })
     }
 
     private fun isBotMention(post: Post): Boolean {

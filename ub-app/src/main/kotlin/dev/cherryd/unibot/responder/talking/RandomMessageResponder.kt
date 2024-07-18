@@ -9,17 +9,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class RandomMessageResponder(
-    private val messagesRepository: MessagesRepository
+    private val messagesRepository: MessagesRepository,
+    private val randomThreshold: RandomThreshold
 ) : Responder {
-
-    private val randomThreshold = RandomThreshold(increaseSpeed = 0.01f)
 
     override fun getPriority(settings: Settings) = Responder.Priority.LOW
 
-    override fun canHandle(post: Post): Boolean = randomThreshold.isHit()
+    override fun canHandle(post: Post): Boolean = randomThreshold.isHit(post.chat, post.settings.chat)
 
-    override fun responseStream(incoming: Post): Flow<Post> = flow {
+    override fun responseStream(post: Post): Flow<Post> = flow {
         val message = messagesRepository.getRandomPosting()
-        if (message.isNotBlank()) emit(incoming.textAnswer(true) { message })
+        if (message.isNotBlank()) emit(post.textAnswer(true) { message })
     }
 }
