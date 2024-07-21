@@ -25,7 +25,7 @@ class ChatRepositoryImpl(
             setString(3, Json.encodeToString(chat.settings))
             val result = executeUpdate()
             logger.debug {
-                if (result == 0) "Chat $chat already exists" else "Chat $chat created"
+                if (result == 0) "Chat #${chat.id} already exists" else "Chat created: $chat"
             }
         }
     }
@@ -66,7 +66,7 @@ class ChatRepositoryImpl(
                 }.onFailure {
                     logger.error(it) { "Unable to restore Chat.Settings from DB record" }
                 }.getOrNull()
-            }.also { logger.debug { "Settings for chat with id $chatId: $it" } }
+            }.also { logger.debug { "Settings for chat with #$chatId: $it" } }
         } ?: Chat.Settings.DEFAULT
     }
 }

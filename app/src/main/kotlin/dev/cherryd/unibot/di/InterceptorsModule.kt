@@ -1,5 +1,6 @@
 package dev.cherryd.unibot.di
 
+import dev.cherryd.unibot.interceptors.ChatLogInterceptor
 import dev.cherryd.unibot.interceptors.ChatStoreInterceptor
 
 object InterceptorsModule {
@@ -8,12 +9,19 @@ object InterceptorsModule {
         ChatStoreInterceptor(
             meter = MicrometerModule.meterRegistry,
             chatsRepository = RepositoriesModule.chatRepository,
-            messagesRepository = RepositoriesModule.messagesRepository,
             usersRepository = RepositoriesModule.usersRepository
         )
     }
 
+    private val chatLogInterceptor: ChatLogInterceptor by lazy {
+        ChatLogInterceptor(
+            meter = MicrometerModule.meterRegistry,
+            messagesRepository = RepositoriesModule.messagesRepository
+        )
+    }
+
     val interceptors = listOf(
-        chatStoreInterceptor
+        chatStoreInterceptor,
+        chatLogInterceptor
     )
 }

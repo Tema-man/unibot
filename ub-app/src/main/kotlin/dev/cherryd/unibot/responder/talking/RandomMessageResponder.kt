@@ -15,7 +15,7 @@ class RandomMessageResponder(
 
     override fun getPriority(settings: Settings) = Responder.Priority.LOW
 
-    override fun canHandle(post: Post): Boolean = true
+    override fun canHandle(post: Post): Boolean = post.extra is Post.Extra.Text
 
     override fun responseStream(post: Post): Flow<Post> = flow {
         if (!randomThreshold.isHit(post.chat)) return@flow
