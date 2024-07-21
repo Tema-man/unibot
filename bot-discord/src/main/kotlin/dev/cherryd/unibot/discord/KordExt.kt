@@ -6,10 +6,11 @@ import dev.kord.core.behavior.channel.MessageChannelBehavior
 import dev.kord.core.cache.data.UserData
 import dev.kord.core.entity.User as KordUser
 
-fun MessageChannelBehavior.toChat(): Chat = Chat(
+fun MessageChannelBehavior.toChat(chatSettings: Chat.Settings): Chat = Chat(
     id = id.value.toString(),
     name = mention,
-    type = Chat.Type.GROUP
+    type = Chat.Type.GROUP,
+    settings = chatSettings
 )
 
 fun KordUser.toUser(): User = User(

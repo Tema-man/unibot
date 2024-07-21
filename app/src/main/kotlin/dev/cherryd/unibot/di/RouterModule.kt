@@ -16,7 +16,7 @@ import dev.cherryd.unibot.responder.tiktok.TikTokVideoDownloader
 
 object RouterModule {
 
-    private val randomThreshold = RandomThreshold(settingsRepository = RepositoriesModule.settingsRepository)
+    private val randomThreshold = RandomThreshold(chatRepository = RepositoriesModule.chatRepository)
     private val userCommandHistory = UserCommandHistory()
     private val antiDdosProtector = AntiDdosProtector(
         dictionary = AppModule.dictionary,

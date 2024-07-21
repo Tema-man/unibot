@@ -19,14 +19,12 @@ data class User(
     companion object Builder {
         private val logger = KotlinLogging.logger {}
 
-        fun fromResultSet(resultSet: ResultSet): User? {
-            return kotlin.runCatching {
-                User(
-                    id = resultSet.getString("id"),
-                    name = resultSet.getString("name"),
-                    role = Role.fromString(resultSet.getString("role"))
-                )
-            }.onFailure { logger.error(it) { "Unable to restore User from DB record" } }.getOrNull()
-        }
+        fun fromResultSet(resultSet: ResultSet): User? = kotlin.runCatching {
+            User(
+                id = resultSet.getString("id"),
+                name = resultSet.getString("name"),
+                role = Role.fromString(resultSet.getString("role"))
+            )
+        }.onFailure { logger.error(it) { "Unable to restore User from DB record" } }.getOrNull()
     }
 }

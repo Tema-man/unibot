@@ -12,18 +12,17 @@ object RelaysModule {
 
     private val telegramBot = TelegramBot(
         environment = AppModule.environment,
-        settingsRepository = RepositoriesModule.settingsRepository
+        chatRepository = RepositoriesModule.chatRepository
     )
 
     private val telegramRelay = TelegramRelay(
-        environment = AppModule.environment,
         commmandsRepository = RepositoriesModule.commandsRepository,
         tgBot = telegramBot
     )
 
     private val discordPostingMapper = PostingMapper(
         parsers = listOf(CommandExtraParser()),
-        settingsRepository = RepositoriesModule.settingsRepository
+        chatRepository = RepositoriesModule.chatRepository
     )
 
     private val discordBot = DiscordBot(

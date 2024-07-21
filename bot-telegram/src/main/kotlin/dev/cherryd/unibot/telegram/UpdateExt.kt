@@ -8,16 +8,17 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User as TgUser
 
-internal fun Update.getUniBotChat(): Chat {
-    val tgChat = when {
-        hasMessage() -> message.chat
-        hasEditedMessage() -> editedMessage.chat
-        else -> when (val message = callbackQuery.message) {
-            is Message -> message.chat
-            else -> (message as InaccessibleMessage).chat
-        }
+internal fun Update.getTgChat() = when {
+    hasMessage() -> message.chat
+    hasEditedMessage() -> editedMessage.chat
+    else -> when (val message = callbackQuery.message) {
+        is Message -> message.chat
+        else -> (message as InaccessibleMessage).chat
     }
+}
 
+internal fun Update.getUniBotChat(chatSettings: Chat.Settings): Chat {
+    val tgChat = getTgChat()
     return Chat(
         id = tgChat.id.toString(),
         name = tgChat.title ?: tgChat.userName ?: "-",
@@ -25,7 +26,8 @@ internal fun Update.getUniBotChat(): Chat {
             tgChat?.isGroupChat == true -> Chat.Type.GROUP
             tgChat?.isSuperGroupChat == true -> Chat.Type.SUPERGROUP
             else -> Chat.Type.PRIVATE
-        }
+        },
+        settings = chatSettings
     )
 }
 
@@ -47,7 +49,7 @@ internal fun Update.toUser(settings: Settings): User {
 
 internal fun TgUser.toUser(settings: Settings, isAdmin: Boolean = false): User {
     val role = when {
-        settings.bot.developerName == userName -> User.Role.DEVELOPER
+        settings.developerName == userName -> User.Role.DEVELOPER
         isBot -> User.Role.BOT
         isAdmin -> User.Role.ADMIN
         else -> User.Role.USER

@@ -1,9 +1,9 @@
 package dev.cherryd.unibot
 
+import dev.cherryd.unibot.di.InterceptorsModule
 import dev.cherryd.unibot.di.MicrometerModule
 import dev.cherryd.unibot.di.RelaysModule
 import dev.cherryd.unibot.di.RouterModule
-import dev.cherryd.unibot.di.ServicesModule
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.application.*
 import io.ktor.server.cio.*
@@ -23,7 +23,7 @@ fun main() {
         relays = RelaysModule.provideRelays(),
         router = RouterModule.provideRouter(),
         meter = MicrometerModule.meterRegistry,
-        chatService = ServicesModule.chatService
+        interceptors = InterceptorsModule.interceptors
     ).apply {
         start()
     }

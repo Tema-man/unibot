@@ -1,23 +1,24 @@
 package dev.cherryd.unibot.telegram
 
-import dev.cherryd.unibot.core.Chat
-import dev.cherryd.unibot.core.Post
-import dev.cherryd.unibot.core.Settings
-import dev.cherryd.unibot.core.User
+import dev.cherryd.unibot.core.*
 import dev.cherryd.unibot.telegram.parser.ExtraParser
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 
 class PostingMediaMapper(
-    private val parsers: List<ExtraParser>
+    private val parsers: List<ExtraParser>,
+    private val chatRepository: ChatRepository
 ) {
-    fun map(update: Update, settings: Settings): Post = mapMessage(
-        message = update.message,
-        sender = update.toUser(settings),
-        chat = update.getUniBotChat(),
-        extra = parseExtra(update, settings),
-        settings = settings
-    )
+    fun map(update: Update, settings: Settings): Post {
+        val chatSettings = chatRepository.getSettingsForChatById(update.getTgChat().id.toString())
+        return mapMessage(
+            message = update.message,
+            sender = update.toUser(settings),
+            chat = update.getUniBotChat(chatSettings),
+            extra = parseExtra(update, settings),
+            settings = settings
+        )
+    }
 
     private fun mapMessage(
         message: Message?,

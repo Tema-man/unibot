@@ -8,6 +8,8 @@ class DiscordRelay(
     private val discordBot: DiscordBot
 ) : Relay {
 
+    override val interactor = discordBot
+
     override fun incomingPostingsFlow(): Flow<Post> = discordBot.observePostings()
 
     override suspend fun post(post: Post) {

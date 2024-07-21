@@ -9,7 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Update
 class CommandExtraParser : ExtraParser {
     override fun parse(update: Update, settings: Settings): Post.Extra? {
         if (update.message?.isCommand == false) return null
-        val command = update.toCommand(settings.bot.name) ?: return null
+        val command = update.toCommand(settings.name) ?: return null
         return Post.Extra.Command(command = command.removePrefix("/"), text = update.text)
     }
 

@@ -44,7 +44,4 @@ class HelpCommandResponder(
         val commandDescription = commandsRepository.findCommandDescription(command)
         return commandDescription?.print(settings.commandPrefix) ?: dictionary.getPhrase(Phrase.COMMAND_NOT_FOUND, settings, command)
     }
-
-    private val Settings.commandPrefix: String
-        get() = bot.commandPrefix
 }

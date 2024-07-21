@@ -1,9 +1,10 @@
 package dev.cherryd.unibot.telegram
 
+import dev.cherryd.unibot.core.ChatRepository
 import dev.cherryd.unibot.core.Environment
 import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Settings
-import dev.cherryd.unibot.core.SettingsRepository
+import dev.cherryd.unibot.core.interceptor.BotInteractor
 import dev.cherryd.unibot.telegram.parser.CommandExtraParser
 import dev.cherryd.unibot.telegram.parser.StickerExtraParser
 import dev.cherryd.unibot.telegram.parser.UrlsExtraParser
@@ -19,8 +20,8 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 
 class TelegramBot(
     environment: Environment,
-    private val settingsRepository: SettingsRepository
-) : TelegramLongPollingBot(environment.get(TELEGRAM_API_KEY)) {
+    private val chatRepository: ChatRepository
+) : TelegramLongPollingBot(environment.get(TELEGRAM_API_KEY)), BotInteractor {
 
     private val logger = KotlinLogging.logger("TelegramBot")
     private val tgBotApi = TelegramBotsApi(DefaultBotSession::class.java)
@@ -33,10 +34,11 @@ class TelegramBot(
             CommandExtraParser(),
             UrlsExtraParser(),
             StickerExtraParser()
-        )
+        ),
+        chatRepository = chatRepository
     )
 
-    private val botSettings = Settings.Bot(
+    private val botSettings = Settings(
         id = environment.get(TELEGRAM_BOT_ID),
         name = environment.get(TELEGRAM_BOT_NAME),
         aliases = environment.getBotNameAliases(),
@@ -64,12 +66,7 @@ class TelegramBot(
         if (update == null) return
         coroutineScope.launch {
             logger.info { "Received Telegram Update: ${update.message.text}" }
-            val chat = update.getUniBotChat()
-            val settings = Settings(
-                bot = botSettings,
-                chat = settingsRepository.getChatSettings(chat)
-            )
-            val post = postingMediaMapper.map(update, settings)
+            val post = postingMediaMapper.map(update, botSettings)
             postingsFlow.emit(post)
         }
     }

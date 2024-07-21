@@ -3,6 +3,7 @@ package dev.cherryd.unibot.discord
 import dev.cherryd.unibot.core.Environment
 import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Settings
+import dev.cherryd.unibot.core.interceptor.BotInteractor
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.event.Event
@@ -24,14 +25,14 @@ import kotlinx.coroutines.launch
 class DiscordBot(
     private val environment: Environment,
     private val postingMapper: PostingMapper
-) {
+) : BotInteractor {
 
     private val logger = KotlinLogging.logger("DiscordBot")
     private val postingsFlow = MutableSharedFlow<Post>()
     private lateinit var kord: Kord
     private val postingScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    private val botSettings = Settings.Bot(
+    private val botSettings = Settings(
         id = environment.get(DISCORD_BOT_ID),
         name = environment.get(DISCORD_BOT_NAME),
         aliases = environment.getBotNameAliases(),

@@ -22,7 +22,7 @@ class BotMentionResponder(
 
     override fun responseStream(post: Post): Flow<Post> = flow {
         if (!canHandle(post)) return@flow
-        val answer = if (randomThreshold.isHit(post.chat, post.settings.chat)) {
+        val answer = if (randomThreshold.isHit(post.chat)) {
             quoteRepository.getRandom()
         } else {
             messagesRepository.getRandomPosting()
@@ -31,16 +31,16 @@ class BotMentionResponder(
     }
 
     private fun isBotMention(post: Post): Boolean {
-        val botName = post.settings.bot.name
+        val botName = post.settings.name
         return post.extra.text.contains(botName, ignoreCase = true)
     }
 
     private fun isBotAliasMention(post: Post): Boolean {
-        val botAliases = post.settings.bot.aliases
+        val botAliases = post.settings.aliases
         return botAliases.any { post.extra.text.contains(it, ignoreCase = true) }
     }
 
     private fun isReplyToBot(post: Post): Boolean = with(post) {
-        reply?.sender?.id == settings.bot.id || reply?.sender?.name == settings.bot.name
+        reply?.sender?.id == settings.id || reply?.sender?.name == settings.name
     }
 }

@@ -2,6 +2,8 @@ package dev.cherryd.unibot
 
 import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Relay
+import dev.cherryd.unibot.core.interceptor.BotInteractor
+import dev.cherryd.unibot.core.interceptor.PostInterceptor
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.*
@@ -15,7 +17,7 @@ class Unibot(
     relays: List<Relay>,
     private val router: Router,
     private val meter: MeterRegistry,
-    private val chatService: ChatService
+    private val interceptors: List<PostInterceptor>
 ) {
 
     private val log = KotlinLogging.logger("Unibot")
@@ -44,7 +46,10 @@ class Unibot(
 
     private suspend fun startRelay(relay: Relay) {
         val postingsFlow = relay.incomingPostingsFlow()
-            .flatMapMerge { posting -> handle(posting) }
+            .flatMapMerge { post ->
+                intercept(post, relay.interactor)
+                handle(post)
+            }
             .filterNotNull()
             .catch { cause ->
                 log.error(cause) { "Exception occurred in relay ${relay.javaClass.name}. Cause: $cause" }
@@ -68,7 +73,6 @@ class Unibot(
     }
 
     private fun handle(post: Post): Flow<Post> {
-        chatService.storePost(post)
         val responder = router.pickResponder(post) ?: return emptyFlow()
         val startTime = System.currentTimeMillis()
         val respondTimer = meter.timer("unibot.response", "responder", responder.javaClass.name)
@@ -79,5 +83,11 @@ class Unibot(
             .onCompletion {
                 respondTimer.record(System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS)
             }
+    }
+
+    private suspend fun intercept(post: Post, interactor: BotInteractor) {
+        interceptors.forEach { interceptor ->
+            interceptor.intercept(post, interactor)
+        }
     }
 }

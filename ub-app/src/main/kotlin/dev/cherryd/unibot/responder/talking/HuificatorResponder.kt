@@ -46,7 +46,7 @@ class HuificatorResponder(
         if (onlyDashes.matches(wordLowerCase)) return false
         if (wordLowerCase.startsWith("ху", true)) return false
 
-        return randomThreshold.isHit(post.chat, post.settings.chat)
+        return randomThreshold.isHit(post.chat)
     }
 
     private fun String?.dropLastDelimiter(): String? {

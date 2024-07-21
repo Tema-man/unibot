@@ -1,7 +1,6 @@
 package dev.cherryd.unibot.telegram
 
 import dev.cherryd.unibot.core.CommandsRepository
-import dev.cherryd.unibot.core.Environment
 import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Relay
 import kotlinx.coroutines.flow.Flow
@@ -13,11 +12,11 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault
 
 class TelegramRelay(
-    environment: Environment,
     private val commmandsRepository: CommandsRepository,
     private val tgBot: TelegramBot
 ) : Relay {
 
+    override val interactor = tgBot
 
     private val postingSender = PostingSender(tgBot)
 
