@@ -1,9 +1,13 @@
 package dev.cherryd.unibot.data
 
+import ch.qos.logback.classic.Level.INFO
+import ch.qos.logback.classic.Logger
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import dev.cherryd.unibot.core.Environment
 import io.micrometer.core.instrument.MeterRegistry
+
+import org.slf4j.LoggerFactory
 import java.sql.PreparedStatement
 
 
@@ -15,6 +19,7 @@ class Database(
     private val dataSource: HikariDataSource
 
     init {
+        (LoggerFactory.getLogger("com.zaxxer.hikari") as Logger).apply { level = INFO }
         val dbName = environment.get(DATABASE_NAME)
         val config = HikariConfig().apply {
             jdbcUrl = "jdbc:postgresql://${environment.get(DATABASE_HOST)}/$dbName"

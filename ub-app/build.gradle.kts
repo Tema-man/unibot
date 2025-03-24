@@ -10,6 +10,7 @@ dependencies {
     implementation(libs.tomlj)
     implementation(libs.hikaricp)
     implementation(libs.postgresql.driver)
+    implementation(libs.logging.logback)
 
     implementation(project(":ub-core"))
 }
