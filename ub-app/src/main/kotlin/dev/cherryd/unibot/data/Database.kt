@@ -3,11 +3,13 @@ package dev.cherryd.unibot.data
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import dev.cherryd.unibot.core.Environment
+import io.micrometer.core.instrument.MeterRegistry
 import java.sql.PreparedStatement
 
 
 class Database(
-    private val environment: Environment
+    private val environment: Environment,
+    private val metrics: MeterRegistry
 ) {
 
     private val dataSource: HikariDataSource
@@ -20,6 +22,7 @@ class Database(
             password = environment.get(DATABASE_PASSWORD)
             maximumPoolSize = 3
             poolName = "HikariPool-PostgreSQL"
+            metricRegistry = metrics
             addDataSourceProperty("cachePrepStmts", "true")
             addDataSourceProperty("prepStmtCacheSize", "250")
             addDataSourceProperty("prepStmtCacheSqlLimit", "2048")

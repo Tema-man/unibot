@@ -7,7 +7,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 
 class UsersRepositoryImpl(
     private val database: Database
-): UsersRepository {
+) : UsersRepository {
 
     private val logger = KotlinLogging.logger {}
 

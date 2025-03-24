@@ -19,7 +19,14 @@
         </encoder>
     </appender>
 
+    <logger name="com.zaxxer.hikari"  level="INFO" additivity="false"/>
+
     <root level="DEBUG">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </root>
+
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
     </root>

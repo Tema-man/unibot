@@ -12,7 +12,10 @@ object AppModule {
 
     val ytDlpWrapper = YtDlpWrapper(environment)
 
-    val database = Database(environment)
+    val database = Database(
+        environment = environment,
+        metrics = MicrometerModule.meterRegistry
+    )
 
     private val dictionaryParser = DictionaryParser()
     val dictionary = Dictionary(dictionaryParser)
