@@ -1,9 +1,10 @@
 <configuration>
     <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    <conversionRule conversionWord="hlx" converterClass="dev.cherryd.unibot.logtools.LogsHighlighter" />
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <charset>utf8</charset>
-            <pattern>%d{HH:mm:ss.SSS} [%-8.8thread] %highlight(%1.-1level) [%cyan(%.20logger{25})]: %highlight(%msg%n)</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%-8.8thread] %hlx(%1.-1level) [%cyan(%.20logger{25})]: %hlx(%msg%n)</pattern>
         </encoder>
     </appender>
 
