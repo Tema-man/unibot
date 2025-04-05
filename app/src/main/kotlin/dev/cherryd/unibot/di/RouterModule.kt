@@ -4,6 +4,7 @@ import dev.cherryd.unibot.Router
 import dev.cherryd.unibot.random.RandomThreshold
 import dev.cherryd.unibot.responder.help.HelpCommandResponder
 import dev.cherryd.unibot.responder.joinchat.JoinChatResponder
+import dev.cherryd.unibot.responder.pidor.PidorStatsCommandResponder
 import dev.cherryd.unibot.responder.pidor.RandomPidorResponder
 import dev.cherryd.unibot.responder.quote.QuoteResponder
 import dev.cherryd.unibot.responder.quote.TopHistoryResponder
@@ -24,11 +25,11 @@ object RouterModule {
     )
 
     val responders = listOf(
-        antiDdosProtector,
+        //antiDdosProtector,
         TikTokVideoDownloader(AppModule.ytDlpWrapper),
         QuoteResponder(RepositoriesModule.quoteRepository),
         JoinChatResponder(AppModule.dictionary),
-        TopHistoryResponder(RepositoriesModule.quoteRepository),
+        TopHistoryResponder(RepositoriesModule.quoteRepository, AppModule.userNameArgumentParser),
         HuificatorResponder(
             randomThreshold = randomThreshold
         ),
@@ -45,7 +46,14 @@ object RouterModule {
             pidorsRepository = RepositoriesModule.pidorsRepository,
             usersRepository = RepositoriesModule.usersRepository,
             dictionary = AppModule.dictionary,
+            typingDelayGenerator = AppModule.typingDelayGenerator,
+            userNameArgumentParser = AppModule.userNameArgumentParser
         ),
+        PidorStatsCommandResponder(
+            pidorsRepository = RepositoriesModule.pidorsRepository,
+            usersRepository = RepositoriesModule.usersRepository,
+            userNameArgumentParser = AppModule.userNameArgumentParser
+        )
     )
 
     private val helpCommandResponder = HelpCommandResponder(

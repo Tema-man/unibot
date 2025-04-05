@@ -1,10 +1,12 @@
 package dev.cherryd.unibot.responder.quote
 
 import dev.cherryd.unibot.core.*
+import dev.cherryd.unibot.core.command.UserNameArgumentParser
 import kotlinx.coroutines.flow.FlowCollector
 
 class TopHistoryResponder(
-    private val repository: QuoteRepository
+    private val repository: QuoteRepository,
+    private val userNameArgumentParser: UserNameArgumentParser
 ) : CommandResponder() {
 
     override fun getPriority(settings: Settings) = Responder.Priority.MEDIUM
@@ -24,19 +26,8 @@ class TopHistoryResponder(
     override suspend fun handleCommand(flow: FlowCollector<Post>, post: Post) {
         val extra = (post.extra as? Post.Extra.Command) ?: return
         val curse = repository.getCurses().random()
-
-        val params = extra.text.split(" ")
-        val text = if (params.size > 1) {
-            val username = params.getOrNull(1) ?: return
-            if (!username.startsWith("@")) {
-                "@$username, $curse"
-            } else {
-                "$username, $curse"
-            }
-        } else {
-            curse
-        }
-
+        val userName = userNameArgumentParser.parse(extra.text)
+        val text = userName?.let { "@$userName, $curse" } ?: curse
         flow.emit(post.textAnswer { text })
     }
 }

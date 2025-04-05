@@ -3,6 +3,7 @@ package dev.cherryd.unibot.telegram
 import dev.cherryd.unibot.core.CommandsRepository
 import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Relay
+import dev.cherryd.unibot.core.random.TypingDelayGenerator
 import kotlinx.coroutines.flow.Flow
 import org.telegram.telegrambots.meta.api.methods.commands.DeleteMyCommands
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands
@@ -13,12 +14,13 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 
 class TelegramRelay(
     private val commmandsRepository: CommandsRepository,
-    private val tgBot: TelegramBot
+    private val tgBot: TelegramBot,
+    private val delayGenerator: TypingDelayGenerator
 ) : Relay {
 
     override val interactor = tgBot
 
-    private val postingSender = PostingSender(tgBot)
+    private val postingSender = PostingSender(tgBot, delayGenerator)
 
     override fun incomingPostingsFlow(): Flow<Post> = tgBot.observePostings()
 

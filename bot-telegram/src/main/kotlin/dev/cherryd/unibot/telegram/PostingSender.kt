@@ -1,6 +1,7 @@
 package dev.cherryd.unibot.telegram
 
 import dev.cherryd.unibot.core.Post
+import dev.cherryd.unibot.core.random.TypingDelayGenerator
 import kotlinx.coroutines.delay
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -12,7 +13,8 @@ import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.ln
 
 class PostingSender(
-    private val tgSender: AbsSender
+    private val tgSender: AbsSender,
+    private val delayGenerator: TypingDelayGenerator
 ) {
 
     suspend fun send(post: Post) {
@@ -50,7 +52,7 @@ class PostingSender(
             chatId = post.chat.id,
             messageId = post.id.toIntOrNull(),
             text = text,
-            shouldTypeBeforeSend = text.length > 10,
+            shouldTypeBeforeSend = text.length > 5,
             replyToUpdate = post.reply != null
         )
     }
@@ -66,7 +68,7 @@ class PostingSender(
     ) {
 
         if (shouldTypeBeforeSend) {
-            val typeDelay = generateTypeDelay(text.length)
+            val typeDelay = delayGenerator.generateTypingDelay(text.length)
             this.execute(SendChatAction(chatId, "typing", null))
             delay(typeDelay)
         }
@@ -79,17 +81,4 @@ class PostingSender(
 
         tgSender.execute(method)
     }
-
-    private fun generateTypeDelay(messageLength: Int): Long {
-        val baseline = ln(if (messageLength >= 500) 500.0 else messageLength.toDouble())
-        val min = baseline * ONE_SYMBOL_TYPING_SPEED_MILLS * 0.9f
-        val max = baseline * ONE_SYMBOL_TYPING_SPEED_MILLS * 1.2f
-        return randomInt(min.toInt(), max.toInt()).toLong()
-    }
-
-    private companion object {
-        const val ONE_SYMBOL_TYPING_SPEED_MILLS = 60
-    }
-
-    private fun randomInt(from: Int, to: Int) = ThreadLocalRandom.current().nextInt(from, to)
 }

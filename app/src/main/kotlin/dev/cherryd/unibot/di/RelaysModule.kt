@@ -17,7 +17,8 @@ object RelaysModule {
 
     private val telegramRelay = TelegramRelay(
         commmandsRepository = RepositoriesModule.commandsRepository,
-        tgBot = telegramBot
+        tgBot = telegramBot,
+        delayGenerator = AppModule.typingDelayGenerator
     )
 
     private val discordPostingMapper = PostingMapper(
