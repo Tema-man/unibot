@@ -15,13 +15,17 @@ class UsersRepositoryImpl(
         logger.debug { "Saving user $user" }
         database.execute(
             """
-                INSERT INTO users (id, name, role) VALUES (?, ?, ?) 
-                ON CONFLICT(id) DO UPDATE SET name = excluded.name, role = excluded.role
+                INSERT INTO users (id, name, mention, role) VALUES (?, ?, ?, ?) 
+                ON CONFLICT(id) DO UPDATE SET 
+                    name = excluded.name,
+                    mention = excluded.mention,
+                    role = excluded.role
             """.trimIndent()
         ) {
             setString(1, user.id)
             setString(2, user.name)
-            setString(3, user.role.name.lowercase())
+            setString(3, user.mention)
+            setString(4, user.role.name.lowercase())
             val result = executeUpdate()
             logger.debug { "User $user saved, result: $result" }
         }
@@ -31,13 +35,14 @@ class UsersRepositoryImpl(
         logger.debug { "Saving users list $users" }
         database.execute(
             """
-                INSERT INTO users (id, name, role) VALUES (?, ?, ?) 
+                INSERT INTO users (id, name, mention, role) VALUES (?, ?, ?, ?) 
                 ON CONFLICT(id) DO UPDATE SET name = excluded.name, role = excluded.role
             """.trimIndent()
         ) {
             users.forEachIndexed { index, user ->
                 setString(1, user.id)
                 setString(2, user.name)
+                setString(3, user.mention)
                 setString(3, user.role.name.lowercase())
                 addBatch()
             }
@@ -65,7 +70,7 @@ class UsersRepositoryImpl(
         logger.debug { "Getting ${if (activeOnly) "active only " else ""}users of chat $chat" }
         return database.execute(
             """
-                SELECT u.id, u.name, u.role
+                SELECT u.id, u.name, u.mention, u.role
                 FROM users u
                 JOIN users2chats u2c ON u.id = u2c.user_id
                 WHERE u2c.chat_id = ?
@@ -87,7 +92,7 @@ class UsersRepositoryImpl(
         logger.debug { "Finding user by name $name" }
         return database.execute(
             """
-                SELECT id, name, role
+                SELECT id, name, mention, role
                 FROM users
                 WHERE name = ?
             """.trimIndent()
@@ -100,6 +105,27 @@ class UsersRepositoryImpl(
                 }
                 User.fromResultSet(resultSet)
                     .also { logger.debug { "User $it found by name $name" } }
+            }
+        }
+    }
+
+    override fun findUserByMention(mention: String): User? {
+        logger.debug { "Finding user by mention $mention" }
+        return database.execute(
+            """
+                SELECT id, name, mention, role
+                FROM users
+                WHERE mention = ?
+            """.trimIndent()
+        ) {
+            setString(1, mention)
+            executeQuery().use { resultSet ->
+                if (!resultSet.next()) {
+                    logger.debug { "No user found by mention $mention" }
+                    return@execute null
+                }
+                User.fromResultSet(resultSet)
+                    .also { logger.debug { "User $it found by name $mention" } }
             }
         }
     }

@@ -38,7 +38,7 @@ class RandomPidorResponder(
     override suspend fun handleCommand(flow: FlowCollector<Post>, post: Post) {
         val pidorOfTheDay = pidorsRepository.getPidorOfChat(post.chat)
         if (pidorOfTheDay != null) {
-            flow.emit(dictionary.phraseAnswer(Phrase.PIROR_DISCOVERED_ONE, post, "@${pidorOfTheDay.name}"))
+            flow.emit(dictionary.phraseAnswer(Phrase.PIROR_DISCOVERED_ONE, post, pidorOfTheDay.mention))
             return
         }
 
@@ -71,7 +71,7 @@ class RandomPidorResponder(
 
         val newPidor = users.random()
         pidorsRepository.savePidor(newPidor, post.chat)
-        emit(post.textAnswer { "@${newPidor.name}" })
+        emit(post.textAnswer { newPidor.mention })
     }
 
     private suspend fun FlowCollector<Post>.tagPidor(post: Post, mention: String) {
@@ -85,6 +85,6 @@ class RandomPidorResponder(
         val phrase = dictionary.getPhrase(Phrase.PIDOR_SEARCH_FINISHER, post.settings)
         emit(post.textAnswer { phrase })
         pidorsRepository.savePidor(user, post.chat)
-        emit(post.textAnswer { "@${user.name}" })
+        emit(post.textAnswer { user.mention })
     }
 }

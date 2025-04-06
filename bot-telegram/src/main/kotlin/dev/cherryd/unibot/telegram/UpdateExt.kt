@@ -58,6 +58,7 @@ internal fun TgUser.toUser(settings: Settings, isAdmin: Boolean = false): User {
         id = id.toString(),
         role = role,
         name = userName ?: "",
+        mention = "@$userName",
     )
 }
 

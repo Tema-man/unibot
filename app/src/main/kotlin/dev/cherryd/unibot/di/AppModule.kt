@@ -1,5 +1,6 @@
 package dev.cherryd.unibot.di
 
+import dev.cherryd.unibot.Unibot
 import dev.cherryd.unibot.core.Environment
 import dev.cherryd.unibot.core.command.UserNameArgumentParser
 import dev.cherryd.unibot.core.random.TypingDelayGenerator
@@ -9,6 +10,15 @@ import dev.cherryd.unibot.dictionary.DictionaryParser
 import dev.cherryd.unibot.media.YtDlpWrapper
 
 object AppModule {
+
+    val unibot by lazy {
+        Unibot(
+            relays = RelaysModule.provideRelays(),
+            router = RouterModule.provideRouter(),
+            meter = MicrometerModule.meterRegistry,
+            interceptors = InterceptorsModule.interceptors
+        )
+    }
 
     val environment = Environment()
 

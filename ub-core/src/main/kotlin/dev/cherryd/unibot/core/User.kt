@@ -6,6 +6,7 @@ import java.sql.ResultSet
 data class User(
     val id: String,
     val name: String,
+    val mention: String,
     val role: Role
 ) {
     enum class Role {
@@ -23,6 +24,7 @@ data class User(
             User(
                 id = resultSet.getString("id"),
                 name = resultSet.getString("name"),
+                mention = resultSet.getString("mention"),
                 role = Role.fromString(resultSet.getString("role"))
             )
         }.onFailure { logger.error(it) { "Unable to restore User from DB record" } }.getOrNull()

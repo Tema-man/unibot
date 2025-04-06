@@ -28,7 +28,8 @@ object RelaysModule {
 
     private val discordBot = DiscordBot(
         AppModule.environment,
-        postingMapper = discordPostingMapper
+        postingMapper = discordPostingMapper,
+        commandsRepository = RepositoriesModule.commandsRepository
     )
 
     private val discordRelay = DiscordRelay(

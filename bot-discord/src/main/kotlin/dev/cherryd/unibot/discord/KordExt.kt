@@ -16,6 +16,7 @@ fun MessageChannelBehavior.toChat(chatSettings: Chat.Settings): Chat = Chat(
 fun KordUser.toUser(): User = User(
     id = id.value.toString(),
     name = username,
+    mention = mention,
     role = when {
         isBot -> User.Role.BOT
         else -> User.Role.USER
@@ -25,6 +26,7 @@ fun KordUser.toUser(): User = User(
 fun UserData.toUser(): User = User(
     id = id.value.toString(),
     name = username,
+    mention = "<@$id>",
     role = when {
         bot.discordBoolean -> User.Role.BOT
         else -> User.Role.USER

@@ -20,39 +20,40 @@ class PidorStatsCommandResponder(
         ),
         examples = listOf(
             "pidor_stats # Показывает статистику всех пидоров",
-            "pidor_stats @username # Показывает статистику для указанного пидора"
+            "pidor_stats @mention # Показывает статистику для указанного пидора"
         )
     )
 
     override fun getPriority(settings: Settings): Responder.Priority = Responder.Priority.MEDIUM
 
     override suspend fun handleCommand(flow: FlowCollector<Post>, post: Post) {
-        val pidorName = userNameArgumentParser.parse(post.extra.text)
-        val message = if (pidorName != null) {
-            getUserPidorStats(pidorName, post.chat)
+        val params = post.extra.text.split(" ")
+        val mention = params.getOrNull(1)
+        val message = if (mention != null) {
+            getUserPidorStats(mention, post.chat)
         } else {
             getChatStatsMessage(post.chat)
         }
         flow.emit(post.textAnswer { message })
     }
 
-    private suspend fun getChatStatsMessage(chat: Chat): String {
+    private fun getChatStatsMessage(chat: Chat): String {
         val pidors = pidorsRepository.getPidorsLeaderboard(chat)
         if (pidors.isEmpty()) return "Нет пидоров в чате"
 
         val statsMessage = pidors.entries.joinToString("\n") { (user, count) ->
-            "@${user.name} был пидором $count раз(а)"
+            "${user.mention} был пидором $count раз(а)"
         }
         return statsMessage
     }
 
-    private suspend fun getUserPidorStats(userName: String, chat: Chat): String {
-        val user = usersRepository.findUserByName(userName) ?: return "@${userName} ещё не был пидором"
-        val pidor = pidorsRepository.getPidorRecordsForUser(user, chat) ?: return "@${userName} ещё не был пидором"
+    private fun getUserPidorStats(userName: String, chat: Chat): String {
+        val user = usersRepository.findUserByMention(userName) ?: return "Хз кто такой этот ваш, ${userName}!"
+        val pidor = pidorsRepository.getPidorRecordsForUser(user, chat) ?: return "${user.mention} ещё не был пидором"
 
         val (count, lastDate) = pidor
         val lastDateFormatted = lastDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val statsMessage = "@${user.name} был пидором $count раз(а). Последний раз - $lastDateFormatted"
+        val statsMessage = "${user.mention} был пидором $count раз(а). Последний раз - $lastDateFormatted"
         return statsMessage
     }
 }

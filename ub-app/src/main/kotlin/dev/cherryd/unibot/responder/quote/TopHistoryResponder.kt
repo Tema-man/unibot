@@ -5,8 +5,9 @@ import dev.cherryd.unibot.core.command.UserNameArgumentParser
 import kotlinx.coroutines.flow.FlowCollector
 
 class TopHistoryResponder(
-    private val repository: QuoteRepository,
-    private val userNameArgumentParser: UserNameArgumentParser
+    private val userNameArgumentParser: UserNameArgumentParser,
+    private val quoteRepository: QuoteRepository,
+    private val usersRepository: UsersRepository
 ) : CommandResponder() {
 
     override fun getPriority(settings: Settings) = Responder.Priority.MEDIUM
@@ -25,9 +26,9 @@ class TopHistoryResponder(
 
     override suspend fun handleCommand(flow: FlowCollector<Post>, post: Post) {
         val extra = (post.extra as? Post.Extra.Command) ?: return
-        val curse = repository.getCurses().random()
-        val userName = userNameArgumentParser.parse(extra.text)
-        val text = userName?.let { "@$userName, $curse" } ?: curse
+        val curse = quoteRepository.getCurses().random()
+        val user = userNameArgumentParser.parse(extra.text)?.let { usersRepository.findUserByName(it) }
+        val text = user?.let { "${user.mention}, $curse" } ?: curse
         flow.emit(post.textAnswer { text })
     }
 }

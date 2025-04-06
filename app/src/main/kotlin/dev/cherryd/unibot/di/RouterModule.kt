@@ -29,13 +29,12 @@ object RouterModule {
         TikTokVideoDownloader(AppModule.ytDlpWrapper),
         QuoteResponder(RepositoriesModule.quoteRepository),
         JoinChatResponder(AppModule.dictionary),
-        TopHistoryResponder(RepositoriesModule.quoteRepository, AppModule.userNameArgumentParser),
-        HuificatorResponder(
-            randomThreshold = randomThreshold
-        ),
-        BotMentionResponder(
+        TopHistoryResponder(
+            userNameArgumentParser = AppModule.userNameArgumentParser,
             quoteRepository = RepositoriesModule.quoteRepository,
-            messagesRepository = RepositoriesModule.messagesRepository,
+            usersRepository = RepositoriesModule.usersRepository
+        ),
+        HuificatorResponder(
             randomThreshold = randomThreshold
         ),
         RandomMessageResponder(
@@ -53,6 +52,11 @@ object RouterModule {
             pidorsRepository = RepositoriesModule.pidorsRepository,
             usersRepository = RepositoriesModule.usersRepository,
             userNameArgumentParser = AppModule.userNameArgumentParser
+        ),
+        BotMentionResponder(
+            quoteRepository = RepositoriesModule.quoteRepository,
+            messagesRepository = RepositoriesModule.messagesRepository,
+            randomThreshold = randomThreshold
         )
     )
 

@@ -1,16 +1,25 @@
 package dev.cherryd.unibot.discord
 
+import dev.cherryd.unibot.core.CommandsRepository
 import dev.cherryd.unibot.core.Environment
 import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Settings
 import dev.cherryd.unibot.core.interceptor.BotInteractor
+import dev.kord.common.entity.AllowedMentionType
+import dev.kord.common.entity.AllowedMentions
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
+import dev.kord.core.behavior.interaction.respondPublic
+import dev.kord.core.behavior.interaction.response.respond
 import dev.kord.core.event.Event
+import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
+import dev.kord.core.supplier.EntitySupplyStrategy
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
+import dev.kord.rest.builder.interaction.string
+import dev.kord.rest.builder.message.AllowedMentionsBuilder
 import dev.kord.rest.builder.message.AttachmentBuilder
 import dev.kord.rest.builder.message.create.UserMessageCreateBuilder
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -24,7 +33,8 @@ import kotlinx.coroutines.launch
 
 class DiscordBot(
     private val environment: Environment,
-    private val postingMapper: PostingMapper
+    private val postingMapper: PostingMapper,
+    private val commandsRepository: CommandsRepository
 ) : BotInteractor {
 
     private val logger = KotlinLogging.logger("DiscordBot")
@@ -38,7 +48,7 @@ class DiscordBot(
         aliases = environment.getBotNameAliases(),
         token = environment.get(DISCORD_BOT_TOKEN),
         developerName = environment.get(DISCORD_DEVELOPER_NAME),
-        commandPrefix = "!"
+        commandPrefix = "/"
     )
 
     suspend fun start() {
@@ -49,6 +59,13 @@ class DiscordBot(
             if (message.author?.isBot == true) return@on
             handleEvent(this@on)
         }
+
+        kord.on<ChatInputCommandInteractionCreateEvent>(scope = postingScope) {
+            interaction.deferPublicResponse().delete()
+            handleEvent(this@on)
+        }
+
+        registerCommands()
 
         postingScope.launch {
             kord.login {
@@ -72,6 +89,9 @@ class DiscordBot(
         val request = UserMessageCreateBuilder().apply {
             content = post.extra.text
             attachments = post.extra.mapAttachments(snowflake)
+            allowedMentions = AllowedMentionsBuilder().apply {
+                add(AllowedMentionType.UserMentions)
+            }
         }.toRequest()
 
         kord.rest.channel.createMessage(snowflake, request)
@@ -90,6 +110,23 @@ class DiscordBot(
         logger.info { "Received Discord event: $event" }
         val post = postingMapper.map(event, botSettings)
         postingsFlow.emit(post)
+    }
+
+    private fun registerCommands() {
+        commandsRepository.getCommands().forEach { command ->
+            postingScope.launch {
+                kord.createGlobalChatInputCommand(
+                    name = command.command,
+                    description = command.description,
+                ) {
+                    if (command.arguments.isNotEmpty()) {
+                        command.arguments.forEach { arg ->
+                            string(arg.name, arg.description)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private companion object {

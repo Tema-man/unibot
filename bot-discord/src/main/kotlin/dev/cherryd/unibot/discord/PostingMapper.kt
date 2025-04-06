@@ -4,11 +4,15 @@ import dev.cherryd.unibot.core.Chat
 import dev.cherryd.unibot.core.ChatRepository
 import dev.cherryd.unibot.core.Post
 import dev.cherryd.unibot.core.Settings
+import dev.cherryd.unibot.discord.eventconverter.CommandReceivedEventConverter
 import dev.cherryd.unibot.discord.eventconverter.EventConverter
 import dev.cherryd.unibot.discord.eventconverter.MessageCreateEventConverter
 import dev.cherryd.unibot.discord.parser.DiscordExtraParser
 import dev.kord.core.cache.data.MessageData
 import dev.kord.core.event.Event
+import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
+import dev.kord.core.event.interaction.GlobalChatInputCommandInteractionCreateEvent
+import dev.kord.core.event.interaction.GuildChatInputCommandInteractionCreateEvent
 import dev.kord.core.event.message.MessageCreateEvent
 import kotlin.reflect.KClass
 
@@ -17,8 +21,13 @@ class PostingMapper(
     chatRepository: ChatRepository
 ) {
 
+    private val commandEventConverter = CommandReceivedEventConverter(chatRepository)
+
     private val eventConverters = mapOf<KClass<*>, EventConverter>(
         MessageCreateEvent::class to MessageCreateEventConverter(chatRepository),
+        ChatInputCommandInteractionCreateEvent::class to commandEventConverter,
+        GuildChatInputCommandInteractionCreateEvent::class to commandEventConverter,
+        GlobalChatInputCommandInteractionCreateEvent::class to commandEventConverter,
     )
 
     fun map(event: Event, botSettings: Settings): Post {

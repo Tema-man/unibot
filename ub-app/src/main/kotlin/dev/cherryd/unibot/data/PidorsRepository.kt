@@ -32,7 +32,7 @@ class PidorsRepository(
         logger.debug { "Getting pidor of chat $chat on $date" }
         return database.execute(
             """
-                SELECT u.id, u.name, u.role
+                SELECT u.id, u.name, u.mention, u.role
                 FROM pidors p
                 JOIN users u ON p.user_id = u.id
                 WHERE p.chat_id = ? AND p.date BETWEEN ? AND ?
@@ -55,7 +55,7 @@ class PidorsRepository(
         logger.debug { "Getting all pidors of chat $chat" }
         return database.execute(
             """
-                SELECT COUNT(*) as count, u.id, u.name, u.role
+                SELECT COUNT(*) as count, u.id, u.name, u.mention, u.role
                 FROM pidors p
                 JOIN users u ON p.user_id = u.id
                 WHERE p.chat_id = ?
